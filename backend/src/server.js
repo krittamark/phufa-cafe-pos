@@ -2,11 +2,15 @@ const express = require("express");
 const app = express();
 const port = 3000;
 
-const OrderRoutes = require("./routes/order.route");
+const orderRoutes = require("./routes/order.route");
+const reportsRouter = require('./routes/report.route');
+const employeesRouter = require('./routes/employee.route');
 
 app.use(express.json());
 
-app.use('/order', OrderRoutes);
+app.use('/order', orderRoutes);
+app.use('/reports', reportsRouter);
+app.use('/employees', employeesRouter);
 
 app.get("/", (req, res) => {
   res.json({
