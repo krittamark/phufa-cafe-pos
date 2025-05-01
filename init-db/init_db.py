@@ -1,3 +1,4 @@
+
 import os
 import pymysql
 import time
@@ -16,9 +17,8 @@ try:
 
     cursor = conn.cursor()
 
-    # SQL statements (ตัดบางส่วนเพื่อความยาว)
     statements = [
-        '''CREATE TABLE IF NOT EXISTS Person (
+        """CREATE TABLE IF NOT EXISTS Person (
             CitizenID VARCHAR(13) NOT NULL COMMENT 'รหัสบัตรประจำตัวประชาชน',
             FirstName VARCHAR(50) NOT NULL COMMENT 'ชื่อจริง',
             LastName VARCHAR(50) NOT NULL COMMENT 'นามสกุล',
@@ -27,90 +27,90 @@ try:
             Address VARCHAR(255) COMMENT 'ที่อยู่',
             ProfileURL VARCHAR(255) COMMENT 'URL รูปภาพโปรไฟล์',
             PRIMARY KEY (CitizenID)
-        ) ENGINE=InnoDB CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci COMMENT 'ข้อมูลบุคคลพื้นฐาน';''',
+        ) ENGINE=InnoDB CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci COMMENT 'ข้อมูลบุคคลพื้นฐาน';""",
 
-        '''CREATE TABLE IF NOT EXISTS Employee (
+        """CREATE TABLE IF NOT EXISTS Employee (
             EmpID VARCHAR(10) NOT NULL COMMENT 'รหัสพนักงาน',
             CitizenID VARCHAR(13) NOT NULL UNIQUE COMMENT 'FK อ้างอิง Person',
             EmpPasswordHash VARCHAR(255) NOT NULL COMMENT 'ค่าแฮชของรหัสผ่าน',
-            EmpRole VARCHAR(50) NOT NULL COMMENT 'ตำแหน่งงาน',
+            EmpRole VARCHAR(50) NOT NULL COMMENT 'ตำแหน่งงาน (เช่น แคชเชียร์, ผู้จัดการ)',
             EmpSalary DECIMAL(10, 2) COMMENT 'เงินเดือน',
             PRIMARY KEY (EmpID),
             CONSTRAINT fk_employee_person FOREIGN KEY (CitizenID) REFERENCES Person(CitizenID)
                 ON DELETE RESTRICT ON UPDATE CASCADE
-        ) ENGINE=InnoDB CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci COMMENT 'ข้อมูลพนักงาน';''',
+        ) ENGINE=InnoDB CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci COMMENT 'ข้อมูลพนักงาน';""",
 
-        '''CREATE TABLE IF NOT EXISTS Customer (
-            CitizenID VARCHAR(13) NOT NULL,
-            Point INT NOT NULL DEFAULT 0,
+        """CREATE TABLE IF NOT EXISTS Customer (
+            CitizenID VARCHAR(13) NOT NULL COMMENT 'FK อ้างอิง Person, PK ของ Customer',
+            Point INT NOT NULL DEFAULT 0 COMMENT 'คะแนนสะสม',
             PRIMARY KEY (CitizenID),
             CONSTRAINT fk_customer_person FOREIGN KEY (CitizenID) REFERENCES Person(CitizenID)
                 ON DELETE CASCADE ON UPDATE CASCADE
-        ) ENGINE=InnoDB CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;''',
+        ) ENGINE=InnoDB CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci COMMENT 'ข้อมูลลูกค้าและคะแนนสะสม';""",
 
-        '''CREATE TABLE IF NOT EXISTS MenuCategory (
-            CategoryID VARCHAR(10) NOT NULL,
-            CategoryName VARCHAR(50) NOT NULL UNIQUE,
-            CategoryStatus VARCHAR(20) NOT NULL DEFAULT 'Active',
+        """CREATE TABLE IF NOT EXISTS MenuCategory (
+            CategoryID VARCHAR(10) NOT NULL COMMENT 'รหัสประเภทเมนู',
+            CategoryName VARCHAR(50) NOT NULL UNIQUE COMMENT 'ชื่อประเภทเมนู (เช่น กาแฟ, ชา, ของหวาน)',
+            CategoryStatus VARCHAR(20) NOT NULL DEFAULT 'Active' COMMENT 'สถานะ (เช่น Active, Inactive)',
             PRIMARY KEY (CategoryID)
-        ) ENGINE=InnoDB CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;''',
+        ) ENGINE=InnoDB CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci COMMENT 'หมวดหมู่ของเมนู';""",
 
-        '''CREATE TABLE IF NOT EXISTS Menu (
-            MenuID VARCHAR(10) NOT NULL,
-            MenuName VARCHAR(100) NOT NULL UNIQUE,
-            MenuPrice DECIMAL(7, 2) NOT NULL,
-            MenuDescription VARCHAR(255),
-            MenuStatus VARCHAR(20) NOT NULL DEFAULT 'พร้อมขาย',
-            MenuURL VARCHAR(255),
-            CategoryID VARCHAR(10) NOT NULL,
+        """CREATE TABLE IF NOT EXISTS Menu (
+            MenuID VARCHAR(10) NOT NULL COMMENT 'รหัสเมนู',
+            MenuName VARCHAR(100) NOT NULL UNIQUE COMMENT 'ชื่อเมนู',
+            MenuPrice DECIMAL(7, 2) NOT NULL COMMENT 'ราคาเมนู',
+            MenuDescription VARCHAR(255) COMMENT 'คำอธิบายเมนู',
+            MenuStatus VARCHAR(20) NOT NULL DEFAULT 'พร้อมขาย' COMMENT 'สถานะเมนู (เช่น พร้อมขาย, หมด, ไม่พร้อมขาย)',
+            MenuURL VARCHAR(255) COMMENT 'URL รูปภาพเมนู',
+            CategoryID VARCHAR(10) NOT NULL COMMENT 'FK อ้างอิง MenuCategory',
             PRIMARY KEY (MenuID),
             CONSTRAINT fk_menu_menucategory FOREIGN KEY (CategoryID) REFERENCES MenuCategory(CategoryID)
                 ON DELETE RESTRICT ON UPDATE CASCADE,
             INDEX idx_menu_category (CategoryID)
-        ) ENGINE=InnoDB CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;''',
+        ) ENGINE=InnoDB CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci COMMENT 'รายการอาหารและเครื่องดื่ม';""",
 
-        '''CREATE TABLE IF NOT EXISTS IngredientCategory (
-            IngredientCategoryID VARCHAR(10) NOT NULL,
-            Name VARCHAR(50) NOT NULL UNIQUE,
-            AllowMultipleSelection BOOLEAN NOT NULL DEFAULT FALSE,
-            IsCustomizable BOOLEAN NOT NULL DEFAULT TRUE,
+        """CREATE TABLE IF NOT EXISTS IngredientCategory (
+            IngredientCategoryID VARCHAR(10) NOT NULL COMMENT 'รหัสประเภทวัตถุดิบ',
+            Name VARCHAR(50) NOT NULL UNIQUE COMMENT 'ชื่อประเภทวัตถุดิบ (เช่น นม, ไซรัป, ผงกาแฟ)',
+            AllowMultipleSelection BOOLEAN NOT NULL DEFAULT FALSE COMMENT 'อนุญาตให้เลือกหลายรายการในหมวดนี้หรือไม่ (สำหรับการปรับแต่ง)',
+            IsCustomizable BOOLEAN NOT NULL DEFAULT TRUE COMMENT 'วัตถุดิบในหมวดนี้ปรับแต่งได้หรือไม่',
             PRIMARY KEY (IngredientCategoryID)
-        ) ENGINE=InnoDB CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;''',
+        ) ENGINE=InnoDB CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci COMMENT 'หมวดหมู่ของวัตถุดิบ';""",
 
-        '''CREATE TABLE IF NOT EXISTS Ingredient (
-            IngredientID VARCHAR(10) NOT NULL,
-            Name VARCHAR(100) NOT NULL UNIQUE,
-            Quantity DECIMAL(10, 2) NOT NULL DEFAULT 0,
-            Unit VARCHAR(20) NOT NULL,
-            CostPerUnit DECIMAL(10, 2) NOT NULL DEFAULT 0,
-            AdjustmentPrice DECIMAL(7, 2) NOT NULL DEFAULT 0,
-            IngredientCategoryID VARCHAR(10) NOT NULL,
+        """CREATE TABLE IF NOT EXISTS Ingredient (
+            IngredientID VARCHAR(10) NOT NULL COMMENT 'รหัสวัตถุดิบ',
+            Name VARCHAR(100) NOT NULL UNIQUE COMMENT 'ชื่อวัตถุดิบ',
+            Quantity DECIMAL(10, 2) NOT NULL DEFAULT 0 COMMENT 'จำนวนคงเหลือในสต็อก',
+            Unit VARCHAR(20) NOT NULL COMMENT 'หน่วยนับ (เช่น กรัม, มิลลิลิตร, ชิ้น)',
+            CostPerUnit DECIMAL(10, 2) NOT NULL DEFAULT 0 COMMENT 'ราคาต้นทุนต่อหน่วย',
+            AdjustmentPrice DECIMAL(7, 2) NOT NULL DEFAULT 0 COMMENT 'ราคาเพิ่มเติมเมื่อใช้ปรับแต่ง (ถ้ามี)',
+            IngredientCategoryID VARCHAR(10) NOT NULL COMMENT 'FK อ้างอิง IngredientCategory',
             PRIMARY KEY (IngredientID),
             CONSTRAINT fk_ingredient_ingredientcategory FOREIGN KEY (IngredientCategoryID) REFERENCES IngredientCategory(IngredientCategoryID)
                 ON DELETE RESTRICT ON UPDATE CASCADE,
             INDEX idx_ingredient_category (IngredientCategoryID)
-        ) ENGINE=InnoDB CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;''',
+        ) ENGINE=InnoDB CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci COMMENT 'รายการวัตถุดิบและสต็อก';""",
 
-        '''CREATE TABLE IF NOT EXISTS DefaultRecipe (
-            MenuID VARCHAR(10) NOT NULL,
-            IngredientID VARCHAR(10) NOT NULL,
-            Quantity DECIMAL(8, 2) NOT NULL,
-            IsBaseIngredient BOOLEAN NOT NULL DEFAULT FALSE,
-            IsReplaceable BOOLEAN NOT NULL DEFAULT TRUE,
+        """CREATE TABLE IF NOT EXISTS DefaultRecipe (
+            MenuID VARCHAR(10) NOT NULL COMMENT 'FK อ้างอิง Menu',
+            IngredientID VARCHAR(10) NOT NULL COMMENT 'FK อ้างอิง Ingredient',
+            Quantity DECIMAL(8, 2) NOT NULL COMMENT 'ปริมาณวัตถุดิบที่ใช้ในสูตร',
+            IsBaseIngredient BOOLEAN NOT NULL DEFAULT FALSE COMMENT 'เป็นวัตถุดิบหลักหรือไม่',
+            IsReplaceable BOOLEAN NOT NULL DEFAULT TRUE COMMENT 'สามารถเปลี่ยนวัตถุดิบนี้ได้หรือไม่',
             PRIMARY KEY (MenuID, IngredientID),
             CONSTRAINT fk_defaultrecipe_menu FOREIGN KEY (MenuID) REFERENCES Menu(MenuID)
                 ON DELETE CASCADE ON UPDATE CASCADE,
             CONSTRAINT fk_defaultrecipe_ingredient FOREIGN KEY (IngredientID) REFERENCES Ingredient(IngredientID)
                 ON DELETE RESTRICT ON UPDATE CASCADE
-        ) ENGINE=InnoDB CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;''',
+        ) ENGINE=InnoDB CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci COMMENT 'ส่วนประกอบและปริมาณมาตรฐานสำหรับแต่ละเมนู';""",
 
-        '''CREATE TABLE IF NOT EXISTS `Order` (
-            OrderID VARCHAR(10) NOT NULL,
-            OrderDateTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-            OrderStatus BOOLEAN NOT NULL DEFAULT FALSE,
-            OrderPrice DECIMAL(10, 2) NOT NULL DEFAULT 0,
-            EmpID VARCHAR(10) NOT NULL,
-            CitizenID VARCHAR(13),
+        """CREATE TABLE IF NOT EXISTS `Order` (
+            OrderID VARCHAR(10) NOT NULL COMMENT 'รหัสคำสั่งซื้อ',
+            OrderDateTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'วันเวลาที่สั่งซื้อ',
+            OrderStatus BOOLEAN NOT NULL DEFAULT FALSE COMMENT 'สถานะคำสั่งซื้อ (0=รอชำระเงิน, 1=ชำระเงินแล้ว/เสร็จสิ้น)',
+            OrderPrice DECIMAL(10, 2) NOT NULL DEFAULT 0 COMMENT 'ราคารวมของคำสั่งซื้อ',
+            EmpID VARCHAR(10) NOT NULL COMMENT 'FK อ้างอิง Employee (พนักงานที่รับออเดอร์)',
+            CitizenID VARCHAR(13) NULL COMMENT 'FK อ้างอิง Customer (ลูกค้าที่สั่ง, อาจเป็น NULL)',
             PRIMARY KEY (OrderID),
             CONSTRAINT fk_order_employee FOREIGN KEY (EmpID) REFERENCES Employee(EmpID)
                 ON DELETE RESTRICT ON UPDATE CASCADE,
@@ -119,17 +119,17 @@ try:
             INDEX idx_order_datetime (OrderDateTime),
             INDEX idx_order_employee (EmpID),
             INDEX idx_order_customer (CitizenID)
-        ) ENGINE=InnoDB CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;''',
+        ) ENGINE=InnoDB CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci COMMENT 'ข้อมูลคำสั่งซื้อหลัก';""",
 
-        '''CREATE TABLE IF NOT EXISTS OrderItem (
-            OrderItemID VARCHAR(15) NOT NULL,
-            OrderID VARCHAR(10) NOT NULL,
-            MenuID VARCHAR(10) NOT NULL,
-            Quantity INT NOT NULL,
-            Note VARCHAR(255),
-            ItemBasePrice DECIMAL(7, 2) NOT NULL,
-            CustomizeCost DECIMAL(7, 2) NOT NULL DEFAULT 0,
-            ItemTotalPrice DECIMAL(10, 2) NOT NULL DEFAULT 0,
+        """CREATE TABLE IF NOT EXISTS OrderItem (
+            OrderItemID VARCHAR(15) NOT NULL COMMENT 'รหัสรายการในคำสั่งซื้อ (ควร Unique)',
+            OrderID VARCHAR(10) NOT NULL COMMENT 'FK อ้างอิง Order',
+            MenuID VARCHAR(10) NOT NULL COMMENT 'FK อ้างอิง Menu',
+            Quantity INT NOT NULL COMMENT 'จำนวนที่สั่ง',
+            Note VARCHAR(255) COMMENT 'หมายเหตุเพิ่มเติมสำหรับรายการนี้',
+            ItemBasePrice DECIMAL(7, 2) NOT NULL COMMENT 'ราคาพื้นฐานของเมนู ณ เวลาที่สั่ง',
+            CustomizeCost DECIMAL(7, 2) NOT NULL DEFAULT 0 COMMENT 'ค่าใช้จ่ายเพิ่มเติมจากการปรับแต่ง',
+            ItemTotalPrice DECIMAL(10, 2) NOT NULL DEFAULT 0 COMMENT 'ราคารวมของรายการนี้',
             PRIMARY KEY (OrderItemID),
             CONSTRAINT fk_orderitem_order FOREIGN KEY (OrderID) REFERENCES `Order`(OrderID)
                 ON DELETE CASCADE ON UPDATE CASCADE,
@@ -137,19 +137,19 @@ try:
                 ON DELETE RESTRICT ON UPDATE CASCADE,
             INDEX idx_orderitem_order (OrderID),
             INDEX idx_orderitem_menu (MenuID)
-        ) ENGINE=InnoDB CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;''',
+        ) ENGINE=InnoDB CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci COMMENT 'รายการสินค้าแต่ละอย่างในคำสั่งซื้อ';""",
 
-        '''CREATE TABLE IF NOT EXISTS CustomIngredient (
-            OrderItemID VARCHAR(15) NOT NULL,
-            IngredientID VARCHAR(10) NOT NULL,
-            Quantity DECIMAL(8, 2) NOT NULL,
-            CustomizationCost DECIMAL(7, 2) NOT NULL DEFAULT 0,
+        """CREATE TABLE IF NOT EXISTS CustomIngredient (
+            OrderItemID VARCHAR(15) NOT NULL COMMENT 'FK อ้างอิง OrderItem',
+            IngredientID VARCHAR(10) NOT NULL COMMENT 'FK อ้างอิง Ingredient ที่ใช้ปรับแต่ง',
+            Quantity DECIMAL(8, 2) NOT NULL COMMENT 'ปริมาณวัตถุดิบที่ปรับแต่ง (เพิ่ม/ลด)',
+            CustomizationCost DECIMAL(7, 2) NOT NULL DEFAULT 0 COMMENT 'ต้นทุนของการปรับแต่งรายการนี้',
             PRIMARY KEY (OrderItemID, IngredientID),
             CONSTRAINT fk_customingredient_orderitem FOREIGN KEY (OrderItemID) REFERENCES OrderItem(OrderItemID)
                 ON DELETE CASCADE ON UPDATE CASCADE,
             CONSTRAINT fk_customingredient_ingredient FOREIGN KEY (IngredientID) REFERENCES Ingredient(IngredientID)
                 ON DELETE RESTRICT ON UPDATE CASCADE
-        ) ENGINE=InnoDB CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;'''
+        ) ENGINE=InnoDB CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci COMMENT 'บันทึกการปรับแต่งวัตถุดิบสำหรับแต่ละ OrderItem';"""
     ]
 
     for stmt in statements:
