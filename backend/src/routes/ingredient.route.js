@@ -7,7 +7,7 @@ const { deleteIngredient } = require("../controller/ingredient/deleteIngredient.
 
 
 router.post("/", createNewIngredient);
-router.put("/:IngredientID", editIngredient);
-router.delete("/:IngredientID", deleteIngredient);
+router.put("/:ingredientId", editIngredient);
+router.delete("/:ingredientId", deleteIngredient);
 
 module.exports = router;

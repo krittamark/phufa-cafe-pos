@@ -1,10 +1,10 @@
 const pool = require("../../utils/database");
 
 async function createNewIngredient(req, res) {
-    const { IngredientID, Name, Quantity, Unit, CostPerUnit, AdjustmentPrice, IngredientCategoryID } = req.body;
+    const { ingredientId, name, quantity, unit, adjustmentPrice, costPerUnit, category } = req.body;
 
     // ตรวจสอบว่าได้รับข้อมูลครบถ้วนหรือไม่
-    if (!IngredientID || !Name || !Quantity || !Unit || !CostPerUnit || !AdjustmentPrice || !IngredientCategoryID) {
+    if (!ingredientId || !name || !quantity || !unit || !adjustmentPrice || !costPerUnit || !category) {
         return res.status(400).json({ message: "Incomplete information" });
     }
     let conn;
@@ -13,38 +13,30 @@ async function createNewIngredient(req, res) {
         // ตรวจสอบว่า IngredientID หรือ Name ซ้ำหรือไม่
         const checkQuery = `
                 SELECT * FROM Ingredient 
-                WHERE IngredientID = ? OR Name = ?
+                WHERE ingredientId = ? 
             `;
-        const rows = await conn.query(checkQuery, [IngredientID, Name]);
+        const rows = await conn.query(checkQuery, ingredientId);
         if (rows.length > 0) {
-            const duplicatedFields = [];
-            if (rows.some(row => row.IngredientID === IngredientID)) duplicatedFields.push("IngredientID");
-            if (rows.some(row => row.Name === Name)) duplicatedFields.push("Name");
-
-            return res.status(400).json({
-                message: `Cannot add: Duplicate data (${duplicatedFields.join(', ')})`
-            });
+            return res.status(400).json({ message: "ingredientId already exists" });
         }
+
         const insertQuery = `
-            INSERT INTO Ingredient (IngredientID, Name, Quantity, Unit, CostPerUnit, AdjustmentPrice, IngredientCategoryID)
+            INSERT INTO Ingredient (ingredientId, name, quantity, unit, adjustmentPrice, costPerUnit, category)
             VALUES (?, ?, ?, ?, ?, ?, ?)
         `;
-        await conn.query(insertQuery, [IngredientID, Name, Quantity, Unit, CostPerUnit, AdjustmentPrice, IngredientCategoryID]);
+        await conn.query(insertQuery, [ingredientId, name, quantity, unit, adjustmentPrice, costPerUnit, category]);
 
         res.status(201).json({
-            IngredientID,
-            Name,
-            Quantity,
-            Unit,
-            CostPerUnit,
-            AdjustmentPrice,
-            IngredientCategoryID
+            ingredientId,
+            name,
+            quantity,
+            unit,
+            adjustmentPrice,
+            costPerUnit,
+            category
         });
     } catch (error) {
-        console.error("Error occurred while adding ingredient: ", error);
-        res.status(500).json({
-            message: "System error occurred"
-        });
+        res.status(500).json({ message: "Internal server error", error: error.message });
     } finally {
         if (conn)
             conn.release();

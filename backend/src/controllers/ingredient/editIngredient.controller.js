@@ -1,15 +1,13 @@
-// backend/src/controllers/editIngredient.js
 const pool = require("../../utils/database");
 
 async function editIngredient(req, res) {
-    const IngredientID = req.params.IngredientID;
+    const ingredientId = req.params.ingredientId;
     const updateData = req.body;
 
     // ตรวจสอบว่ามีข้อมูลส่งมาหรือไม่
     if (Object.keys(updateData).length === 0) {
         return res.status(400).json({ message: 'No data provided for update' });
     }
-
 
     let conn;
     try {
@@ -18,16 +16,17 @@ async function editIngredient(req, res) {
 
         // ตรวจสอบว่า IngredientID นี้มีอยู่จริงหรือไม่
         const existing = await conn.query(
-            'SELECT IngredientID FROM Ingredient WHERE IngredientID = ? LIMIT 1', [IngredientID]
+            'SELECT * FROM Ingredient WHERE ingredientId = ? LIMIT 1', [ingredientId]
         );
 
         if (existing.length === 0) {
-            return res.status(404).json({ message: "IngredientID to update not found" });
+            return res.status(404).json();
         }
 
+        const currentData = existing[0]; // ข้อมูลเก่าของ ingredient
 
         // ฟิลด์ที่อนุญาตให้แก้ไข
-        const allowedFields = ['Name', 'Quantity', 'Unit', 'CostPerUnit', 'AdjustmentPrice', 'IngredientCategoryID'];
+        const allowedFields = ['name', 'quantity', 'unit', 'adjustmentPrice', 'costPerUnit', 'category'];
 
         const updateFields = [];
         const updateValues = [];
@@ -44,24 +43,34 @@ async function editIngredient(req, res) {
 
         // ไม่มีฟิลด์ที่สามารถอัปเดตได้
         if (updateFields.length === 0) {
-            return res.status(400).json({ message: 'No editable fields provided' });
+            return res.status(400).json({ message: 'No valid fields to update' });
         }
 
         // Construct SQL UPDATE and inject values
-        const updateQuery = `UPDATE Ingredient SET ${updateFields.join(', ')} WHERE IngredientID = ?`;
-        updateValues.push(IngredientID);
+        const updateQuery = `UPDATE Ingredient SET ${updateFields.join(', ')} WHERE ingredientId = ?`;
+        updateValues.push(ingredientId);
 
         const updateResult = await conn.query(updateQuery, updateValues);
         console.log(`Ingredient updated, affected rows:`, updateResult.affectedRows);
 
-        res.status(200).json({ message: 'Ingredient updated successfully', affectedRows: updateResult.affectedRows });
+        // ส่งข้อมูลที่อัปเดตกลับไป
+        const updatedIngredient = {...currentData, ...updateData };
+
+        res.status(200).json({
+            ingredientId: updatedIngredient.ingredientId,
+            name: updatedIngredient.name,
+            quantity: updatedIngredient.quantity,
+            unit: updatedIngredient.unit,
+            adjustmentPrice: updatedIngredient.adjustmentPrice,
+            costPerUnit: updatedIngredient.costPerUnit,
+            category: updatedIngredient.category
+        });
     } catch (error) {
         console.error('Error occurred while updating:', error);
-        res.status(500).json({ message: 'An error occurred while updating', error: error.message });
+        res.status(500).json({ message: 'Internal server error', error: error.message });
     } finally {
         if (conn) conn.release();
     }
-
 }
 
 module.exports = { editIngredient };
