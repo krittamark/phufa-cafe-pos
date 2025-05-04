@@ -1,9 +1,9 @@
 const express = require("express");
 const router = express.Router();
 
-const { editIngredient } = require("../controller/ingredient/editIngredient.controller");
-const { createNewIngredient } = require("../controller/ingredient/createNewIngredient.controller");
-const { deleteIngredient } = require("../controller/ingredient/deleteIngredient.controller");
+const { editIngredient } = require("../controllers/ingredient/editIngredient.controller");
+const { createNewIngredient } = require("../controllers/ingredient/createNewIngredient.controller");
+const { deleteIngredient } = require("../controllers/ingredient/deleteIngredient.controller");
 
 
 router.post("/", createNewIngredient);

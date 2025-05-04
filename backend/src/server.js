@@ -20,7 +20,7 @@ app.use('/order', orderRoutes);
 app.use('/reports', reportsRouter);
 app.use('/employees', employeesRouter);
 app.use('/customers', customerRouter);
-app.use("/ingredient", ingredientRoutes);
+app.use("/ingredients", ingredientRoutes);
 app.use('/menu', menuRoutes);
 
 
