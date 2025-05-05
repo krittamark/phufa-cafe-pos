@@ -1,4 +1,4 @@
-const db = require('../utils/database');
+const db = require('../../utils/database');
 
 module.exports = async (req, res) => {
     const { empId } = req.params;
@@ -75,6 +75,6 @@ module.exports = async (req, res) => {
         res.json(Object.values(orderMap));
     } catch (err) {
         console.error('❌ Error fetching orders:', err);
-        res.status(500).json({ error: 'Internal server error' });
+        res.status(500).json({ message: "An unexpected error occurred while retrieving employee orders."});
     }
 };

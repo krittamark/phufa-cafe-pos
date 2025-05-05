@@ -1,4 +1,4 @@
-const db = require('../utils/database');
+const db = require('../../utils/database');
 
 module.exports = async (req, res) => {
     const { date } = req.query;
