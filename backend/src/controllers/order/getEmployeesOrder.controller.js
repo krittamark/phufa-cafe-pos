@@ -75,6 +75,6 @@ module.exports = async (req, res) => {
         res.json(Object.values(orderMap));
     } catch (err) {
         console.error('❌ Error fetching orders:', err);
-        res.status(500).json({ message: "An unexpected error occurred while retrieving employee orders."});
+        res.status(500).json({ "message": "An unexpected error occurred while retrieving employee orders."});
     }
 };

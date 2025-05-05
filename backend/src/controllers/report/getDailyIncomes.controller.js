@@ -30,6 +30,6 @@ module.exports = async (req, res) => {
 
     } catch (err) {
         console.error('❌ Error fetching daily income:', err);
-        res.status(500).json({ error: 'Internal server error' });
+        res.status(500).json({ "message": "An unexpected error occurred while retrieving employee orders."});
     }
 };
