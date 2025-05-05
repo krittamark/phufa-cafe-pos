@@ -1,8 +1,8 @@
 const express = require('express');
 const router = express.Router();
 
-const updateMenuStatus = require('../controllers/menu/updateMenuItemStatus.controller')
-const getMenuByCategory = require('../controllers/menu/showMenuItemsByCategory.controller')
+const updateMenuStatus = require('../controllers/menu/updateMenuStatus.controller')
+const getMenuByCategory = require('../controllers/menu/getMenuByCategory.controller')
 
 router.patch('/:menuId', updateMenuStatus);
 router.get('/', getMenuByCategory);
