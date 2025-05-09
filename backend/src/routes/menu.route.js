@@ -1,10 +1,18 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
 
+const {
+  createMenuValidator,
+  updateMenuValidator,
+} = require("../middlewares/menuValidator.middleware");
+const createMenu = require("../controllers/menu/createMenu.controller");
+const updateMenu = require("../controllers/menu/updateMenu.controller");
 const updateMenuStatus = require('../controllers/menu/updateMenuStatus.controller')
 const getMenuByCategory = require('../controllers/menu/getMenuByCategory.controller')
 
-router.patch('/:menuId', updateMenuStatus);
-router.get('/', getMenuByCategory);
+router.get("/", getMenuByCategory);
+router.post("/", createMenuValidator, createMenu);
+router.put("/:menuId", updateMenuValidator, updateMenu);
+router.patch("/:menuId", updateMenuStatus);
 
 module.exports = router;
