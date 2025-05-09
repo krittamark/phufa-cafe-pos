@@ -9,10 +9,12 @@ const createMenu = require("../controllers/menu/createMenu.controller");
 const updateMenu = require("../controllers/menu/updateMenu.controller");
 const updateMenuStatus = require('../controllers/menu/updateMenuStatus.controller')
 const getMenuByCategory = require('../controllers/menu/getMenuByCategory.controller')
+const getDefaultRecipeForMenu = require('../controllers/menu/getDefaultRecipeForMenu.controller');
 
 router.get("/", getMenuByCategory);
 router.post("/", createMenuValidator, createMenu);
 router.put("/:menuId", updateMenuValidator, updateMenu);
 router.patch("/:menuId", updateMenuStatus);
+router.get("/:menuId/recipe", getDefaultRecipeForMenu);
 
 module.exports = router;
