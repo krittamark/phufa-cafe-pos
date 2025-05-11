@@ -16,12 +16,12 @@ function generateNumericIdPart(length = 8) {
 
   // Fill the rest with random numbers
   const randomPartLength = length - timestampPortion.length;
-  let randomPortion = "";
+  let randomPortion = '';
   if (randomPartLength > 0) {
     const maxRandom = Math.pow(10, randomPartLength);
     randomPortion = Math.floor(Math.random() * maxRandom)
       .toString()
-      .padStart(randomPartLength, "0");
+      .padStart(randomPartLength, '0');
   }
 
   return (timestampPortion + randomPortion).slice(0, length); // Ensure exact length

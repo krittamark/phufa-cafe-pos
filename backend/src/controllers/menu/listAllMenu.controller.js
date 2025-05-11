@@ -1,5 +1,5 @@
 // backend/controllers/menu/listAllMenuItems.controller.js
-const db = require("../../utils/database");
+const db = require('../../utils/database');
 
 /**
  * @desc    List All Menu Items
@@ -7,16 +7,15 @@ const db = require("../../utils/database");
  * @access  Private (Requires bearerAuth)
  */
 module.exports = async (req, res) => {
-
-  const { category } = req.query;
+  const {category} = req.query;
 
   try {
     let query =
-      "SELECT MenuID, MenuName, MenuPrice, MenuStatus, MenuCategory, MenuDescription, MenuURL FROM Menu";
+      'SELECT MenuID, MenuName, MenuPrice, MenuStatus, MenuCategory, MenuDescription, MenuURL FROM Menu';
     const queryParams = [];
 
     if (category) {
-      query += " WHERE MenuCategory = ?";
+      query += ' WHERE MenuCategory = ?';
       queryParams.push(category);
     }
 
@@ -31,11 +30,9 @@ module.exports = async (req, res) => {
 
     res.status(200).json(menus);
   } catch (error) {
-    console.error("Error listing all menu items:", error);
-    res
-      .status(500)
-      .json({
-        message: "An unexpected error occurred while retrieving menu items.",
-      });
+    console.error('Error listing all menu items:', error);
+    res.status(500).json({
+      message: 'An unexpected error occurred while retrieving menu items.',
+    });
   }
 };

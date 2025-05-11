@@ -11,14 +11,11 @@ const listAllEmployees = require('../controllers/employee/listAllEmployees.contr
 router.get('/:empId/orders', getEmployeeOrders);
 router.post('/', createEmployee);
 
-
 // TODO: Added access authentication middleware for admin/owners
 router.put('/:empId', updateEmployee);
 // TODO: Added access authentication middleware for admin/owners
 router.delete('/:empId', deleteEmployee);
 router.get('/:empId', getEmployeeById);
 router.get('/', listAllEmployees);
-
-
 
 module.exports = router;

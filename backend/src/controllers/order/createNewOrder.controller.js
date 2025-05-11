@@ -1,22 +1,22 @@
-const pool = require("../../utils/database");
+const pool = require('../../utils/database');
 const {
   generateOrderId,
   generateOrderItemId,
-} = require("../../utils/idGenerator");
+} = require('../../utils/idGenerator');
 
 // --- Helper Function ---
 async function processOrderItem(item, orderId, connection) {
   // Validate item data
-  if (!item.menuId || typeof item.quantity !== "number" || item.quantity <= 0) {
+  if (!item.menuId || typeof item.quantity !== 'number' || item.quantity <= 0) {
     return {
-      error: "Invalid item data: menuId and positive quantity required.",
+      error: 'Invalid item data: menuId and positive quantity required.',
     };
   }
 
   // Fetch menu item details
   const [menuItemRows] = await connection.execute(
     'SELECT MenuPrice, MenuName FROM Menu WHERE MenuID = ? AND MenuStatus = "พร้อมขาย"',
-    [item.menuId]
+    [item.menuId],
   );
   if (menuItemRows.length === 0) {
     return {
@@ -33,11 +33,11 @@ async function processOrderItem(item, orderId, connection) {
   if (item.customizations && Array.isArray(item.customizations)) {
     for (const cust of item.customizations) {
       if (!cust.ingredientId) {
-        return { error: "Invalid customization: ingredientId required." };
+        return {error: 'Invalid customization: ingredientId required.'};
       }
       const [ingredientRows] = await connection.execute(
-        "SELECT AdjustmentPrice, Name FROM Ingredient WHERE IngredientID = ?",
-        [cust.ingredientId]
+        'SELECT AdjustmentPrice, Name FROM Ingredient WHERE IngredientID = ?',
+        [cust.ingredientId],
       );
       if (ingredientRows.length === 0) {
         return {
@@ -46,7 +46,7 @@ async function processOrderItem(item, orderId, connection) {
       }
       const customizationIngredient = ingredientRows;
       const customizationCostApplied = parseFloat(
-        customizationIngredient.AdjustmentPrice
+        customizationIngredient.AdjustmentPrice,
       );
       currentItemCustomizeCostPerUnit += customizationCostApplied;
 
@@ -73,7 +73,7 @@ async function processOrderItem(item, orderId, connection) {
 
   // Insert order item into database
   await connection.execute(
-    "INSERT INTO OrderItem (OrderItemID, OrderID, MenuID, Quantity, Note, ItemBasePrice, CustomizeCost, ItemTotalPrice) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+    'INSERT INTO OrderItem (OrderItemID, OrderID, MenuID, Quantity, Note, ItemBasePrice, CustomizeCost, ItemTotalPrice) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
     [
       orderItemId,
       orderId,
@@ -83,19 +83,19 @@ async function processOrderItem(item, orderId, connection) {
       itemBasePrice,
       totalCustomizeCostForItem,
       itemTotalPrice,
-    ]
+    ],
   );
 
   // Insert custom ingredients into database
   for (const custDb of customizationsForDb) {
     await connection.execute(
-      "INSERT INTO CustomIngredient (OrderItemID, IngredientID, Quantity, CustomizationCost) VALUES (?, ?, ?, ?)",
+      'INSERT INTO CustomIngredient (OrderItemID, IngredientID, Quantity, CustomizationCost) VALUES (?, ?, ?, ?)',
       [
         orderItemId,
         custDb.ingredientId,
         custDb.quantity,
         custDb.customizationCost,
-      ]
+      ],
     );
   }
 
@@ -115,7 +115,7 @@ async function processOrderItem(item, orderId, connection) {
 }
 
 module.exports = async (req, res) => {
-  const { orderMakerEmpId, orderByCitizenId, items } = req.body;
+  const {orderMakerEmpId, orderByCitizenId, items} = req.body;
 
   // Validate required fields
   if (
@@ -125,7 +125,7 @@ module.exports = async (req, res) => {
     items.length === 0
   ) {
     return res.status(400).json({
-      message: "Missing required fields: orderMakerEmpId and items array.",
+      message: 'Missing required fields: orderMakerEmpId and items array.',
     });
   }
 
@@ -141,7 +141,7 @@ module.exports = async (req, res) => {
 
     // Insert order into database
     await connection.execute(
-      "INSERT INTO `Order` (OrderID, OrderDateTime, OrderStatus, OrderPrice, EmpID, CitizenID) VALUES (?, ?, ?, ?, ?, ?)",
+      'INSERT INTO `Order` (OrderID, OrderDateTime, OrderStatus, OrderPrice, EmpID, CitizenID) VALUES (?, ?, ?, ?, ?, ?)',
       [
         orderId,
         orderDateTime,
@@ -149,7 +149,7 @@ module.exports = async (req, res) => {
         calculatedOrderPrice,
         orderMakerEmpId,
         orderByCitizenId || null,
-      ]
+      ],
     );
 
     // Process each item in the order
@@ -157,7 +157,7 @@ module.exports = async (req, res) => {
       const itemResult = await processOrderItem(item, orderId, connection);
       if (itemResult.error) {
         await connection.rollback();
-        return res.status(400).json({ message: itemResult.error });
+        return res.status(400).json({message: itemResult.error});
       }
       calculatedOrderPrice += itemResult.itemTotalPrice;
       orderItemsResults.push(itemResult.orderItem);
@@ -165,7 +165,6 @@ module.exports = async (req, res) => {
 
     await connection.commit();
 
-    
     res.status(201).json({
       orderId: orderId,
       orderDateTime: orderDateTime.toISOString(),
@@ -179,9 +178,9 @@ module.exports = async (req, res) => {
     if (connection) {
       await connection.rollback();
     }
-    console.error("Error creating order:", error);
+    console.error('Error creating order:', error);
     res.status(500).json({
-      message: "An unexpected error occurred while creating the order.",
+      message: 'An unexpected error occurred while creating the order.',
     });
   } finally {
     if (connection) {

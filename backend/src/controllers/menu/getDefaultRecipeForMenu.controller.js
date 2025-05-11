@@ -1,16 +1,18 @@
 const db = require('../../utils/database');
-const asyncHandler = require('express-async-handler');
 
 /**
  * @desc    Get Default Recipe for a Menu Item
  * @route   GET /api/menu/:menuId/recipe
  * @access  Private (Authenticated users)
  */
-const getDefaultRecipeForMenu = asyncHandler(async (req, res) => {
-  const { menuId } = req.params;
+const getDefaultRecipeForMenu = async (req, res) => {
+  const {menuId} = req.params;
 
   // 1. ตรวจสอบก่อนว่า MenuID นี้มีอยู่จริงในตาราง Menu หรือไม่ (เป็นทางเลือกที่ดี)
-  const menuExists = await db.query('SELECT MenuID FROM Menu WHERE MenuID = ?', [menuId]);
+  const menuExists = await db.query(
+    'SELECT MenuID FROM Menu WHERE MenuID = ?',
+    [menuId],
+  );
 
   if (menuExists.length === 0) {
     res.status(404);
@@ -26,7 +28,7 @@ const getDefaultRecipeForMenu = asyncHandler(async (req, res) => {
         dr.IsReplaceable AS isReplaceable
      FROM DefaultRecipe dr
      WHERE dr.MenuID = ?`,
-    [menuId]
+    [menuId],
   );
 
   // 3. ตรวจสอบว่าพบสูตรสำหรับ MenuID นี้หรือไม่
@@ -42,11 +44,11 @@ const getDefaultRecipeForMenu = asyncHandler(async (req, res) => {
     ingredientId: item.ingredientId,
     quantity: parseFloat(item.quantity), // Quantity เป็น DECIMAL ใน DB
     isBaseIngredient: Boolean(item.isBaseIngredient),
-    isReplaceable: Boolean(item.isReplaceable)
+    isReplaceable: Boolean(item.isReplaceable),
   }));
 
   // 5. ส่ง response กลับไป
   res.status(200).json(formattedRecipe);
-});
+};
 
 module.exports = getDefaultRecipeForMenu;

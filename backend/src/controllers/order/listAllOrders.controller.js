@@ -1,5 +1,5 @@
 // backend/controllers/order/listAllOrders.controller.js
-const db = require("../../utils/database");
+const db = require('../../utils/database');
 
 /**
  * @desc    List All Orders
@@ -9,7 +9,7 @@ const db = require("../../utils/database");
 module.exports = async (req, res) => {
   // TODO: Implement authentication/authorization checks (admin/owner)
 
-  const { status, employeeId } = req.query;
+  const {status, employeeId} = req.query;
 
   try {
     let baseQuery = `
@@ -25,19 +25,19 @@ module.exports = async (req, res) => {
     const conditions = [];
     const queryParams = [];
 
-    if (typeof status !== "undefined") {
-      conditions.push("o.OrderStatus = ?");
-      queryParams.push(status === "true" || status === true ? 1 : 0);
+    if (typeof status !== 'undefined') {
+      conditions.push('o.OrderStatus = ?');
+      queryParams.push(status === 'true' || status === true ? 1 : 0);
     }
     if (employeeId) {
-      conditions.push("o.EmpID = ?");
+      conditions.push('o.EmpID = ?');
       queryParams.push(employeeId);
     }
 
     if (conditions.length > 0) {
-      baseQuery += " WHERE " + conditions.join(" AND ");
+      baseQuery += ' WHERE ' + conditions.join(' AND ');
     }
-    baseQuery += " ORDER BY o.OrderDateTime DESC";
+    baseQuery += ' ORDER BY o.OrderDateTime DESC';
 
     const orders = await db.query(baseQuery, queryParams);
 
@@ -51,7 +51,7 @@ module.exports = async (req, res) => {
              FROM OrderItem oi
              JOIN Menu m ON oi.MenuID = m.MenuID
              WHERE oi.OrderID = ?`,
-        [order.orderId]
+        [order.orderId],
       );
 
       const orderItemsWithCustomizations = [];
@@ -64,9 +64,9 @@ module.exports = async (req, res) => {
                  FROM CustomIngredient ci
                  JOIN Ingredient ing ON ci.IngredientID = ing.IngredientID
                  WHERE ci.OrderItemID = ?`,
-          [item.orderItemId]
+          [item.orderItemId],
         );
-        orderItemsWithCustomizations.push({ ...item, customizations });
+        orderItemsWithCustomizations.push({...item, customizations});
       }
       resultOrders.push({
         ...order,
@@ -77,11 +77,9 @@ module.exports = async (req, res) => {
 
     res.status(200).json(resultOrders);
   } catch (error) {
-    console.error("Error listing all orders:", error);
-    res
-      .status(500)
-      .json({
-        message: "An unexpected error occurred while retrieving orders.",
-      });
+    console.error('Error listing all orders:', error);
+    res.status(500).json({
+      message: 'An unexpected error occurred while retrieving orders.',
+    });
   }
 };

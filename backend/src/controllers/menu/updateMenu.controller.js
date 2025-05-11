@@ -1,14 +1,14 @@
-const pool = require("../../utils/database");
-const { validationResult } = require("express-validator");
+const pool = require('../../utils/database');
+const {validationResult} = require('express-validator');
 
 const updateMenu = async (req, res) => {
   const menu = req.body;
-  const { menuId } = req.params;
+  const {menuId} = req.params;
 
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(400).json({
-      error: "Bad Request - Invalid input data.",
+      error: 'Bad Request - Invalid input data.',
     });
   }
 
@@ -74,7 +74,7 @@ const updateMenu = async (req, res) => {
     await conn.rollback();
 
     console.log(err);
-    return res.status(500).json({ error: "Internal Server Error." });
+    return res.status(500).json({error: 'Internal Server Error.'});
   } finally {
     await conn.release();
   }

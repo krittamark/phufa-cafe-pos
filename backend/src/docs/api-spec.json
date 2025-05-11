@@ -2922,12 +2922,7 @@
             "maxLength": 100
           }
         },
-        "required": [
-          "citizenId",
-          "firstname",
-          "lastname",
-          "phoneNum"
-        ]
+        "required": ["citizenId", "firstname", "lastname", "phoneNum"]
       },
       "Employee": {
         "allOf": [
@@ -2957,11 +2952,7 @@
                 "example": 25000
               }
             },
-            "required": [
-              "empId",
-              "empRole",
-              "empSalary"
-            ]
+            "required": ["empId", "empRole", "empSalary"]
           }
         ]
       },
@@ -3062,9 +3053,7 @@
                 "readOnly": true
               }
             },
-            "required": [
-              "point"
-            ]
+            "required": ["point"]
           }
         ]
       },
@@ -3074,9 +3063,7 @@
             "$ref": "#/components/schemas/PersonBase"
           }
         ],
-        "required": [
-          "citizenId"
-        ]
+        "required": ["citizenId"]
       },
       "CustomerUpdate": {
         "type": "object",

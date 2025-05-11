@@ -1,5 +1,5 @@
 // backend/controllers/ingredient/listIngredientCategories.controller.js
-const db = require("../../utils/database");
+const db = require('../../utils/database');
 
 /**
  * @desc    List Ingredient Categories
@@ -11,11 +11,11 @@ module.exports = async (req, res) => {
 
   try {
     const categories = await db.query(
-      "SELECT IngredientCategoryID as ingredientCategoryId, Name as name, AllowMultipleSelection as allowMultipleSelection, IsCustomizable as isCustomizable FROM IngredientCategory"
+      'SELECT IngredientCategoryID as ingredientCategoryId, Name as name, AllowMultipleSelection as allowMultipleSelection, IsCustomizable as isCustomizable FROM IngredientCategory',
     );
 
     // Convert 0/1 from DB to boolean true/false for JSON response
-    const formattedCategories = categories.map((cat) => ({
+    const formattedCategories = categories.map(cat => ({
       ...cat,
       allowMultipleSelection: !!cat.allowMultipleSelection,
       isCustomizable: !!cat.isCustomizable,
@@ -23,12 +23,10 @@ module.exports = async (req, res) => {
 
     res.status(200).json(formattedCategories);
   } catch (error) {
-    console.error("Error listing ingredient categories:", error);
-    res
-      .status(500)
-      .json({
-        message:
-          "An unexpected error occurred while retrieving ingredient categories.",
-      });
+    console.error('Error listing ingredient categories:', error);
+    res.status(500).json({
+      message:
+        'An unexpected error occurred while retrieving ingredient categories.',
+    });
   }
 };

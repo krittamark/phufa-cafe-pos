@@ -7,10 +7,10 @@ const deleteOrderById = require('../controllers/order/deleteOrderById.controller
 const getOrderById = require('../controllers/order/getOrderById.controller');
 const listAllOrders = require('../controllers/order/listAllOrders.controller');
 
-router.delete('/:orderId', deleteOrderById)
-router.post('/', createNewOrder)
+router.delete('/:orderId', deleteOrderById);
+router.post('/', createNewOrder);
 router.patch('/:orderId', updateOrderStatus);
 router.get('/:orderId', getOrderById);
 router.get('/', listAllOrders);
 
-module.exports = router
+module.exports = router;

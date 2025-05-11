@@ -1,5 +1,5 @@
 // backend/controllers/employee/listAllEmployees.controller.js
-const db = require("../../utils/database");
+const db = require('../../utils/database');
 
 /**
  * @desc    List All Employees
@@ -20,15 +20,13 @@ module.exports = async (req, res) => {
               p.Gender as gender, p.PhoneNum as phoneNum, p.Address as address, p.ProfileURL as profileUrl,
               e.EmpRole as empRole, e.EmpSalary as empSalary
        FROM Employee e
-       JOIN Person p ON e.CitizenID = p.CitizenID`
+       JOIN Person p ON e.CitizenID = p.CitizenID`,
     );
     res.status(200).json(employees);
   } catch (error) {
-    console.error("Error listing all employees:", error);
-    res
-      .status(500)
-      .json({
-        message: "An unexpected error occurred while retrieving employees.",
-      });
+    console.error('Error listing all employees:', error);
+    res.status(500).json({
+      message: 'An unexpected error occurred while retrieving employees.',
+    });
   }
 };

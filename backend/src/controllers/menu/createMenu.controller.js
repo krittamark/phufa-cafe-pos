@@ -1,5 +1,5 @@
-const pool = require("../../utils/database");
-const { validationResult } = require("express-validator");
+const pool = require('../../utils/database');
+const {validationResult} = require('express-validator');
 
 const createMenu = async (req, res) => {
   const menu = req.body;
@@ -7,7 +7,7 @@ const createMenu = async (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(400).json({
-      error: "Bad Request - Invalid input data.",
+      error: 'Bad Request - Invalid input data.',
     });
   }
 
@@ -32,13 +32,13 @@ const createMenu = async (req, res) => {
     let [results] = await conn.query(getMenuPk);
     let menuId;
     if (results.menuId == 0) {
-      menuId = "M000000001";
+      menuId = 'M000000001';
     } else {
       const prefix = results.menuId.slice(0, 1);
       const number = parseInt(results.menuId.slice(1));
 
       const newNumber = number + 1;
-      const padded = String(newNumber).padStart(9, "0");
+      const padded = String(newNumber).padStart(9, '0');
 
       menuId = prefix + padded;
     }
@@ -77,7 +77,7 @@ const createMenu = async (req, res) => {
     await conn.rollback();
 
     console.log(err);
-    return res.status(500).json({ error: "Internal Server Error." });
+    return res.status(500).json({error: 'Internal Server Error.'});
   } finally {
     await conn.release();
   }
