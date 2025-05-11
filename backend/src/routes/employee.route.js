@@ -8,14 +8,11 @@ const getEmployeeById = require('../controllers/employee/getEmployeeById.control
 const listAllEmployees = require('../controllers/employee/listAllEmployees.controller');
 
 // Get all orders for a specific employee
-router.get('/:empId/orders', getEmployeeOrders);
-router.post('/', createEmployee);
-
-// TODO: Added access authentication middleware for admin/owners
-router.put('/:empId', updateEmployee);
-// TODO: Added access authentication middleware for admin/owners
-router.delete('/:empId', deleteEmployee);
-router.get('/:empId', getEmployeeById);
 router.get('/', listAllEmployees);
+router.post('/', createEmployee);
+router.get('/:empId', getEmployeeById);
+router.put('/:empId', updateEmployee);
+router.delete('/:empId', deleteEmployee);
+router.get('/:empId/orders', getEmployeeOrders);
 
 module.exports = router;

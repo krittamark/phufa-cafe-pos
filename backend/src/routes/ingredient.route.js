@@ -13,10 +13,10 @@ const {
 const getIngredientById = require('../controllers/ingredient/getIngredientById.controller');
 const listAllIngredients = require('../controllers/ingredient/listAllIngredients.controller');
 
+router.get('/', listAllIngredients);
 router.post('/', createNewIngredient);
+router.get('/:ingredientId', getIngredientById);
 router.put('/:ingredientId', editIngredient);
 router.delete('/:ingredientId', deleteIngredient);
-router.get('/:ingredientId', getIngredientById);
-router.get('/', listAllIngredients);
 
 module.exports = router;

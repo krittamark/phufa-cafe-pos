@@ -15,13 +15,13 @@ const deleteMenu = require('../controllers/menu/deleteMenu.controller');
 const getDefaultRecipeForMenu = require('../controllers/menu/getDefaultRecipeForMenu.controller');
 
 //router.get("/", getMenuByCategory);
-router.get('/category/:menuCategory', getMenuByCategory);
+router.get('/', listAllMenu);
 router.post('/', createMenuValidator, createMenu);
+router.get('/category/:menuCategory', getMenuByCategory);
+router.get('/:menuId', getMenuById);
 router.put('/:menuId', updateMenuValidator, updateMenu);
 router.patch('/:menuId', updateMenuStatus);
-router.get('/:menuId/recipe', getDefaultRecipeForMenu);
-router.get('/:menuId', getMenuById);
-router.get('/', listAllMenu);
 router.delete('/:menuId', deleteMenu);
+router.get('/:menuId/recipe', getDefaultRecipeForMenu);
 
 module.exports = router;
