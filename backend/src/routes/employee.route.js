@@ -4,7 +4,8 @@ const getEmployeeOrders = require('../controllers/order/getEmployeesOrder.contro
 const createEmployee = require('../controllers/employee/createEmployee.controller');
 const updateEmployee = require('../controllers/employee/updateEmployee.controller');
 const deleteEmployee = require('../controllers/employee/deleteEmployee.controller');
-
+const getEmployeeById = require('../controllers/employee/getEmployeeById.controller');
+const listAllEmployees = require('../controllers/employee/listAllEmployees.controller');
 
 // Get all orders for a specific employee
 router.get('/:empId/orders', getEmployeeOrders);
@@ -15,6 +16,9 @@ router.post('/', createEmployee);
 router.put('/:empId', updateEmployee);
 // TODO: Added access authentication middleware for admin/owners
 router.delete('/:empId', deleteEmployee);
+router.get('/:empId', getEmployeeById);
+router.get('/', listAllEmployees);
+
 
 
 module.exports = router;

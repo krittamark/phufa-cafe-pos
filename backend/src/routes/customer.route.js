@@ -3,6 +3,8 @@ const createCustomerController = require('../controllers/customer/createCustomer
 const updateCustomerController = require('../controllers/customer/updateCustomer.controller');
 const collectPointController = require('../controllers/customer/collectPoint.controller');
 const redeemPointController = require('../controllers/customer/redeemPoint.controller');
+const getCustomerById = require('../controllers/customer/getCustomerById.controller');
+const listAllCustomers = require('../controllers/customer/listAllCustomers.controller');
 const router = express.Router();
 
 // Route: POST /api/customers
@@ -20,5 +22,8 @@ router.post('/:customerId/points', collectPointController);
 // Route: POST /api/customers/:customerId/redeem //แลกแต้ม
 // Controller: redeemPointController
 router.post('/:customerId/redeem', redeemPointController);
+
+router.get('/:customerId', getCustomerById);
+router.get('/', listAllCustomers);
 
 module.exports = router;
