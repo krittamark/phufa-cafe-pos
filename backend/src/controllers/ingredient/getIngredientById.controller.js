@@ -13,7 +13,7 @@ module.exports = async (req, res) => {
 
   try {
     const ingredient = await db.query(
-      'SELECT IngredientID as ingredientId, Name as name, Quantity as quantity, Unit as unit, AdjustmentPrice as adjustmentPrice, CostPerUnit as costPerUnit, IngredientCategoryID as category FROM Ingredient WHERE IngredientID = ?',
+      'SELECT IngredientID as ingredientId, Ingredient.Name as name, Quantity as quantity, Unit as unit, AdjustmentPrice as adjustmentPrice, CostPerUnit as costPerUnit, IngredientCategory.Name as category FROM Ingredient LEFT JOIN IngredientCategory ON Ingredient.IngredientCategoryID = IngredientCategory.IngredientCategoryID WHERE IngredientID = ?',
       [ingredientId],
     );
 

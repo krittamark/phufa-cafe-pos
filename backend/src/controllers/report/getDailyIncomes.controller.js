@@ -11,7 +11,7 @@ module.exports = async (req, res) => {
   }
 
   try {
-    const [rows] = await db.query(
+    const rows = await db.query(
       `
             SELECT 
                 COUNT(*) AS orderCount,
@@ -33,7 +33,8 @@ module.exports = async (req, res) => {
   } catch (err) {
     console.error('❌ Error fetching daily income:', err);
     res.status(500).json({
-      message: 'An unexpected error occurred while retrieving employee orders.',
+      message:
+        'An unexpected error occurred while generating the daily income report.',
     });
   }
 };

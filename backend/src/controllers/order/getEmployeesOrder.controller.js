@@ -8,7 +8,7 @@ module.exports = async (req, res) => {
   }
 
   try {
-    const [rows] = await db.query(
+    const rows = await db.query(
       `
             SELECT 
                 o.OrderID,

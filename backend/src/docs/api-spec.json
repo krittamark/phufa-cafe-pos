@@ -138,7 +138,7 @@
       "get": {
         "tags": ["Menu"],
         "summary": "List All Menu Items",
-        "description": "Retrieves a list of all available menu items, optionally filtered by category.",
+        "description": "Retrieves a list of all available menu items, optionally filtered by category name.",
         "parameters": [
           {
             "name": "category",
@@ -274,8 +274,8 @@
     "/menu/category/{categoryName}": {
       "get": {
         "tags": ["Menu"],
-        "summary": "List Menu Items by Category",
-        "description": "Retrieves a list of all available menu items belonging to a specific category.",
+        "summary": "List Menu Items by Category Name",
+        "description": "Retrieves a list of all available menu items belonging to a specific category name.",
         "parameters": [
           {
             "name": "categoryName",
@@ -1265,6 +1265,84 @@
                 },
                 "example": {
                   "message": "An unexpected error occurred while retrieving ingredient categories."
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/ingredient-categories/{ingredientCategoryId}/ingredients": {
+      "get": {
+        "tags": ["Ingredient"],
+        "summary": "List Ingredients by Category ID",
+        "description": "Retrieves all ingredients belonging to a specific ingredient category by its ID.",
+        "parameters": [
+          {
+            "name": "ingredientCategoryId",
+            "in": "path",
+            "required": true,
+            "description": "The unique ID of the ingredient category.",
+            "schema": {
+              "type": "string"
+            },
+            "example": "IC98563000"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A list of ingredients for the specified category.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Ingredient"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Authentication required."
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Ingredient category not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Ingredient category with ID 'IC_NONEXISTENT' not found."
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "An unexpected error occurred while retrieving ingredients for the category."
                 }
               }
             }
@@ -3125,7 +3203,7 @@
           },
           "menuCategory": {
             "type": "string",
-            "description": "Category of the menu item.",
+            "description": "Category name of the menu item.",
             "example": "กาแฟ",
             "maxLength": 20
           },
@@ -3169,6 +3247,7 @@
           },
           "menuCategory": {
             "type": "string",
+            "description": "Category name of the menu item.",
             "example": "กาแฟ"
           },
           "menuDescription": {
@@ -3208,7 +3287,8 @@
             "type": "string"
           },
           "menuCategory": {
-            "type": "string"
+            "type": "string",
+            "description": "Category name of the menu item."
           },
           "menuDescription": {
             "type": "string"
@@ -3267,7 +3347,7 @@
           },
           "category": {
             "type": "string",
-            "description": "Category ID the ingredient belongs to.",
+            "description": "Ingredient Category ID this ingredient belongs to.",
             "example": "IC98563000"
           }
         },
@@ -3312,6 +3392,7 @@
           },
           "category": {
             "type": "string",
+            "description": "Ingredient Category ID this ingredient belongs to.",
             "example": "IC10000000"
           }
         },
@@ -3339,7 +3420,8 @@
             "format": "float"
           },
           "category": {
-            "type": "string"
+            "type": "string",
+            "description": "Ingredient Category ID this ingredient belongs to."
           }
         }
       },
@@ -3383,7 +3465,7 @@
           "ingredientId": {
             "type": "string",
             "description": "ID of the ingredient used.",
-            "example": "I98563"
+            "example": "I985630000"
           },
           "quantity": {
             "type": "number",
@@ -3414,7 +3496,7 @@
         "properties": {
           "ingredientId": {
             "type": "string",
-            "example": "I98563"
+            "example": "I985630000"
           },
           "quantity": {
             "type": "number",

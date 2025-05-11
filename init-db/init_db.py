@@ -73,7 +73,7 @@ create_table_statements = [
 
     """CREATE TABLE IF NOT EXISTS Menu (
         MenuID VARCHAR(10) NOT NULL COMMENT 'รหัสเมนู',
-        MenuName VARCHAR(100) NOT NULL UNIQUE COMMENT 'ชื่อเมนู',
+        MenuName VARCHAR(100) NOT NULL COMMENT 'ชื่อเมนู',
         MenuPrice DECIMAL(7, 2) NOT NULL COMMENT 'ราคาเมนู',
         MenuDescription VARCHAR(255) COMMENT 'คำอธิบายเมนู',
         MenuStatus VARCHAR(20) NOT NULL DEFAULT 'พร้อมขาย' COMMENT 'สถานะเมนู (เช่น พร้อมขาย, หมด, ไม่พร้อมขาย)',

@@ -14,7 +14,7 @@ async function processOrderItem(item, orderId, connection) {
   }
 
   // Fetch menu item details
-  const [menuItemRows] = await connection.execute(
+  const menuItemRows = await connection.execute(
     'SELECT MenuPrice, MenuName FROM Menu WHERE MenuID = ? AND MenuStatus = "พร้อมขาย"',
     [item.menuId],
   );
@@ -35,7 +35,7 @@ async function processOrderItem(item, orderId, connection) {
       if (!cust.ingredientId) {
         return {error: 'Invalid customization: ingredientId required.'};
       }
-      const [ingredientRows] = await connection.execute(
+      const ingredientRows = await connection.execute(
         'SELECT AdjustmentPrice, Name FROM Ingredient WHERE IngredientID = ?',
         [cust.ingredientId],
       );

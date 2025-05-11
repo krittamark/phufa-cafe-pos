@@ -7,8 +7,6 @@ const db = require('../../utils/database');
  * @access  Private (Requires admin/owner privileges, bearerAuth)
  */
 module.exports = async (req, res) => {
-  // TODO: Implement authentication/authorization checks (admin/owner)
-
   const {menuId} = req.params;
 
   // Check if menu item exists
@@ -22,28 +20,16 @@ module.exports = async (req, res) => {
       .json({message: `Menu item with ID '${menuId}' not found.`});
   }
 
-  // Note: The SQL schema for DefaultRecipe has ON DELETE CASCADE for MenuID.
-  // And OrderItem has ON DELETE RESTRICT for MenuID.
-  // This means if a menu item is part of an existing order, it cannot be deleted directly.
-  // The API spec says "Use with caution, consider soft delete or status change".
-  // A true "soft delete" would involve an "isDeleted" flag. Changing status is PATCH.
-  // This DELETE operation will attempt a hard delete.
-
   const connection = await db.getConnection();
   try {
     await connection.beginTransaction();
 
-    // Attempt to delete from Menu. If it's referenced in OrderItem, this will fail
-    // due to the RESTRICT constraint.
-    // DefaultRecipe entries will be cascaded.
     const deleteResult = await connection.query(
       'DELETE FROM Menu WHERE MenuID = ?',
       [menuId],
     );
 
     if (deleteResult.affectedRows === 0) {
-      // This should ideally be caught by the foreign key constraint if it's in an order.
-      // Or it means the item was already deleted.
       await connection.rollback(); // Rollback just in case, though nothing might have happened
       return res.status(404).json({
         message: `Menu item with ID '${menuId}' not found or already deleted.`,

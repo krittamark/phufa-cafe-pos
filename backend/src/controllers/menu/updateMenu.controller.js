@@ -61,7 +61,7 @@ const updateMenu = async (req, res) => {
     }
 
     await conn.commit();
-    return res.status(201).json({
+    return res.status(200).json({
       menuId: menuId,
       menuName: menu.menuName,
       menuPrice: menu.menuPrice,
@@ -69,6 +69,7 @@ const updateMenu = async (req, res) => {
       menuCategory: menu.menuCategory,
       menuDescription: menu.menuDescription,
       menuUrl: menu.menuUrl,
+      defaultRecipe: menu.defaultRecipe,
     });
   } catch (err) {
     await conn.rollback();

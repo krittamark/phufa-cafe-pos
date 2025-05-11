@@ -15,6 +15,7 @@ const employeesRouter = require('./routes/employee.route');
 const customerRouter = require('./routes/customer.route');
 const ingredientRoutes = require('./routes/ingredient.route');
 const menuRoutes = require('./routes/menu.route');
+const ingredientCategoriesRoutes = require('./routes/ingredient-categories.route');
 const errorNotFoundMiddleware = require('./middlewares/errorNotFound.middleware');
 
 app.use(express.json());
@@ -27,6 +28,7 @@ app.use('/employees', employeesRouter);
 app.use('/customers', customerRouter);
 app.use('/ingredients', ingredientRoutes);
 app.use('/menu', menuRoutes);
+app.use('/ingredient-categories', ingredientCategoriesRoutes);
 
 app.get('/', (req, res) => {
   res.json({
