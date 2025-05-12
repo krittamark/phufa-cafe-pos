@@ -18,11 +18,9 @@ module.exports = async (req, res) => {
       [ingredientCategoryId],
     );
     if (category.length === 0) {
-      return res
-        .status(404)
-        .json({
-          message: `Ingredient category with ID '${ingredientCategoryId}' not found.`,
-        });
+      return res.status(404).json({
+        message: `Ingredient category with ID '${ingredientCategoryId}' not found.`,
+      });
     }
 
     // 2. Fetch all ingredients belonging to this category
@@ -38,11 +36,9 @@ module.exports = async (req, res) => {
       `Error retrieving ingredients for category ID ${ingredientCategoryId}:`,
       error,
     );
-    res
-      .status(500)
-      .json({
-        message:
-          'An unexpected error occurred while retrieving ingredients for the category.',
-      });
+    res.status(500).json({
+      message:
+        'An unexpected error occurred while retrieving ingredients for the category.',
+    });
   }
 };

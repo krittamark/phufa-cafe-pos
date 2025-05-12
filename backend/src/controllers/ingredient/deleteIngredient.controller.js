@@ -41,11 +41,9 @@ async function deleteIngredient(req, res) {
         message: `Cannot delete ingredient item '${ingredientId}' as it is referenced in existing items.`,
       });
     }
-    res
-      .status(500)
-      .json({
-        message: 'An unexpected error occurred while deleting the ingredient.',
-      });
+    res.status(500).json({
+      message: 'An unexpected error occurred while deleting the ingredient.',
+    });
   } finally {
     if (conn) conn.release();
   }
