@@ -143,18 +143,7 @@
         "tags": ["Menu"],
         "summary": "List All Menu Items",
         "description": "Retrieves a list of all available menu items, optionally filtered by category name.",
-        "parameters": [
-          {
-            "name": "category",
-            "in": "query",
-            "required": false,
-            "description": "Filter menu items by category name.",
-            "schema": {
-              "type": "string"
-            },
-            "example": "กาแฟ"
-          }
-        ],
+        "parameters": [],
         "responses": {
           "200": {
             "description": "A list of menu items.",
@@ -2086,8 +2075,8 @@
           },
           "category": {
             "type": "string",
-            "description": "Ingredient Category ID this ingredient belongs to.",
-            "example": "IC98563000"
+            "description": "Ingredient Category Name this ingredient belongs to.",
+            "example": "เมล็ดกาแฟ"
           }
         },
         "required": [
@@ -2131,8 +2120,8 @@
           },
           "category": {
             "type": "string",
-            "description": "Ingredient Category ID this ingredient belongs to.",
-            "example": "IC10000000"
+            "description": "Ingredient Category Name this ingredient belongs to.",
+            "example": "เมล็ดกาแฟ"
           }
         },
         "required": ["name", "quantity", "unit", "costPerUnit", "category"]
