@@ -163,6 +163,13 @@ module.exports = async (req, res) => {
       orderItemsResults.push(itemResult.orderItem);
     }
 
+    // Update order price after processing all items
+    await connection.execute(
+      'UPDATE `Order` SET OrderPrice = ? WHERE OrderID = ?',
+      [calculatedOrderPrice, orderId],
+    );
+    
+
     await connection.commit();
 
     res.status(201).json({

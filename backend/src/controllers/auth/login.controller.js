@@ -30,9 +30,9 @@ module.exports = async (req, res, next) => {
   try {
     connection = await pool.getConnection(); // Get a connection from the pool
 
-    // 3. Query for employee by EmpID
+    // 3. Query for employee with name by EmpID
     const employeeQuery =
-      'SELECT EmpID, EmpPasswordHash, EmpRole, CitizenID FROM Employee WHERE EmpID = ? LIMIT 1';
+      'SELECT EmpID, EmpPasswordHash, EmpRole, Person.CitizenID, FirstName, LastName FROM Employee INNER JOIN Person ON Person.CitizenID = Employee.CitizenID WHERE EmpID = ? LIMIT 1';
     const rows = await connection.query(employeeQuery, [empId]);
     
     if (!rows || rows.length === 0) {
@@ -64,6 +64,7 @@ module.exports = async (req, res, next) => {
       empId: employee.EmpID,
       role: employee.EmpRole,
       citizenId: employee.CitizenID,
+      name: employee.FirstName + ' ' + employee.LastName,
     };
 
     const accessToken = jwt.sign(payload, JWT_SECRET, {
@@ -79,6 +80,7 @@ module.exports = async (req, res, next) => {
         // Optionally return some non-sensitive employee info
         empId: employee.EmpID,
         role: employee.EmpRole,
+        name: employee.FirstName + ' ' + employee.LastName,
       },
     });
   } catch (error) {

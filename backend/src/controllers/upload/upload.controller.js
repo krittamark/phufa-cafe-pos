@@ -9,7 +9,7 @@ exports.handleProfileImageUpload = (req, res) => {
   }
   // req.file ถูกสร้างโดย multer และมีข้อมูลไฟล์ที่อัปโหลด
   // สร้าง URL แบบ relative สำหรับการเข้าถึงไฟล์
-  const relativeFileUrl = `/uploads/profiles/${req.file.filename}`;
+  const relativeFileUrl = `/api/uploads/profiles/${req.file.filename}`;
 
   res.status(201).json({
     message: 'File uploaded successfully.',
@@ -28,7 +28,7 @@ exports.handleMenuImageUpload = (req, res) => {
   if (!req.file) {
     return res.status(400).json({message: 'No file uploaded.'});
   }
-  const relativeFileUrl = `/uploads/menus/${req.file.filename}`;
+  const relativeFileUrl = `/api/uploads/menus/${req.file.filename}`;
 
   res.status(201).json({
     message: 'File uploaded successfully.',
