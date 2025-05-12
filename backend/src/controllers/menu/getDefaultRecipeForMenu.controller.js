@@ -15,8 +15,9 @@ const getDefaultRecipeForMenu = async (req, res) => {
   );
 
   if (menuExists.length === 0) {
-    res.status(404);
-    throw new Error(`Menu item with ID '${menuId}' not found.`);
+    return res.status(404).json({
+      message: `Menu item with ID '${menuId}' not found.`,
+    });
   }
 
   // 2. ดึงข้อมูลสูตร DefaultRecipe จากฐานข้อมูล
@@ -34,8 +35,9 @@ const getDefaultRecipeForMenu = async (req, res) => {
   // 3. ตรวจสอบว่าพบสูตรสำหรับ MenuID นี้หรือไม่
   if (recipeItems.length === 0) {
     // ถ้า MenuID มีอยู่แต่ไม่มีสูตร (อาจจะยังไม่ได้กำหนด) ก็ควรตอบ 404 ตาม API spec
-    res.status(404);
-    throw new Error(`Recipe for menu ID '${menuId}' not found.`);
+    return res.status(404).json({
+      message: `Recipe for menu ID '${menuId}' not found.`,
+    });
   }
 
   // 4. จัดรูปแบบข้อมูลให้ตรงกับ schema 'DefaultRecipe' ใน OpenAPI

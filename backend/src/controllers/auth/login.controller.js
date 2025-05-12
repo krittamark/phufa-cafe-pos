@@ -2,10 +2,10 @@
 const db = require('../../utils/database');
 const jwt = require('jsonwebtoken'); // You'll need to install this: npm install jsonwebtoken
 // You'll also need a password comparison library like bcrypt: npm install bcrypt
-const bcrypt = require('bcrypt');
+const argon2 = require('argon2');
 
-const JWT_SECRET = process.env.JWT_SECRET || 'your-very-strong-secret-key'; // Store this in .env
-const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN || '1h';
+const JWT_SECRET = process.env.APP_SECRET || 'your-very-strong-secret-key'; // Store this in .env
+const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN || '16h';
 
 /**
  * @desc    Employee Login
@@ -35,18 +35,9 @@ module.exports = async (req, res) => {
 
     const employee = employees[0];
 
-    // Compare password
-    // The EmpPasswordHash in your sample data looks like Argon2.
-    // If you are using Argon2, you'd use an Argon2 library.
-    // For this example, I'll assume bcrypt, adjust if you used Argon2 for hashing.
-    // If using Argon2:
-    // const argon2 = require('argon2');
-    // const validPassword = await argon2.verify(employee.EmpPasswordHash, password);
-
-    // Using bcrypt as an example:
-    const validPassword = await bcrypt.compare(
-      password,
+    const validPassword = await argon2.verify(
       employee.EmpPasswordHash,
+      password,
     );
 
     if (!validPassword) {
