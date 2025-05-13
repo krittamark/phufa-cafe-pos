@@ -23,7 +23,7 @@ async function processOrderItem(item, orderId, connection) {
       error: `Menu item with ID ${item.menuId} not found or not available.`,
     };
   }
-  const menuItem = menuItemRows;
+  const menuItem = menuItemRows[0];
   const itemBasePrice = parseFloat(menuItem.MenuPrice);
   let currentItemCustomizeCostPerUnit = 0;
   const customizationsForDb = [];
@@ -162,6 +162,13 @@ module.exports = async (req, res) => {
       calculatedOrderPrice += itemResult.itemTotalPrice;
       orderItemsResults.push(itemResult.orderItem);
     }
+
+    // Update order price after processing all items
+    await connection.execute(
+      'UPDATE `Order` SET OrderPrice = ? WHERE OrderID = ?',
+      [calculatedOrderPrice, orderId],
+    );
+    
 
     await connection.commit();
 

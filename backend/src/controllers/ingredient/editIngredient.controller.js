@@ -33,8 +33,10 @@ async function editIngredient(req, res) {
       'unit',
       'adjustmentPrice',
       'costPerUnit',
-      'category',
+      'IngredientCategoryID',
     ];
+
+    updateData.category = ingredientId; // เพิ่ม ingredientId ลงใน updateData
 
     const updateFields = [];
     const updateValues = [];

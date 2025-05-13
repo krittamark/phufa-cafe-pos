@@ -7,6 +7,22 @@ import { usePathname } from 'next/navigation';
 export default function Header() {
   const pathname = usePathname();
 
+  const EmployeeName = localStorage.getItem('employeeName');
+  const EmployeeRole = localStorage.getItem('employeeRole');
+  const EmployeeId = localStorage.getItem('employeeId');
+  const token = localStorage.getItem('token');
+  console.log('EmployeeId:', EmployeeId);
+  console.log('EmployeeName:', EmployeeName);
+  console.log('EmployeeRole:', EmployeeRole);
+
+  const logout = () => {
+    localStorage.removeItem('employeeId');
+    localStorage.removeItem('employeeName');
+    localStorage.removeItem('employeeRole');
+    localStorage.removeItem('token');
+    window.location.href = '/';
+  };
+
   const navigation = [
     { name: 'POS', href: '/pos' },
     { name: 'Menu', href: '/dashboard' },
@@ -35,8 +51,7 @@ export default function Header() {
           <div className="h-6 w-px bg-gray-200" />
         </div>
         <div className="flex items-center gap-2">
-          {/* ต้องแก้เอาข้อมูลพนักงานจริง ๆ มาใส่ */}
-          <span className="text-sm font-medium">Somchai L.</span>
+          <span className="text-sm font-medium">{EmployeeName}</span>
           <span className="text-xs text-gray-500">Cashier</span>
           <div className="w-8 h-8 bg-gray-200 rounded-full"></div>
         </div>

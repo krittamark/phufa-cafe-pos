@@ -31,9 +31,19 @@ async function deleteIngredient(req, res) {
     }
   } catch (error) {
     console.error('Error deleting ingredient:', error);
-    res
-      .status(500)
-      .json({message: 'Internal server error', error: error.message});
+    if (
+      error.code === 'ER_ROW_IS_REFERENCED_2' ||
+      error.sqlMessage?.includes(
+        'FOREIGN KEY (`IngredientID`) REFERENCES `Ingredient` (`IngredientID`) ON DELETE RESTRICT',
+      )
+    ) {
+      return res.status(400).json({
+        message: `Cannot delete ingredient item '${ingredientId}' as it is referenced in existing items.`,
+      });
+    }
+    res.status(500).json({
+      message: 'An unexpected error occurred while deleting the ingredient.',
+    });
   } finally {
     if (conn) conn.release();
   }
