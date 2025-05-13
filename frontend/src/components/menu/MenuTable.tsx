@@ -1,5 +1,6 @@
 'use client';
 
+import { useEffect, useState } from 'react';
 export interface MenuItem {
   menuId: string;
   menuName: string;
@@ -8,35 +9,42 @@ export interface MenuItem {
   menuStatus: string;
   menuCategory: string;
   menuUrl: string;
+  defaultRecipe: any[];
 }
 
 interface MenuTableProps {
   onSelectMenu: (menu: MenuItem | null) => void;
 }
 
-const menuItems: MenuItem[] = [
-  {
-    menuId: 'M000000001',
-    menuName: 'อเมริกาโน่Test',
-    menuDescription:'GoodCoffee',
-    menuPrice: 45,
-    menuStatus: 'พร้อมขาย',
-    menuCategory: 'กาแฟ',
-    menuUrl: 'picture'
-  },
-  {
-    menuId: 'M000000002',
-    menuName: 'ชาไทยTest',
-    menuDescription: 'ILoveIt',
-    menuPrice: 40,
-    menuStatus: 'พร้อมขาย',
-    menuCategory: 'ชา',
-    menuUrl: 'picture'
-  }
-];
 
 export default function MenuTable({ onSelectMenu }: MenuTableProps) {
-  
+  const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchMenus = async () => {
+      try {
+        const res = await fetch('/api/menu');
+        if (!res.ok) {
+          throw new Error('Cannot load menu');
+        }
+        const data = await res.json();
+        setMenuItems(data);
+      } catch (err: any) {
+        console.error(err);
+        setError(err.message || 'Error occurred');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchMenus();
+  }, []);
+
+  if (loading) return <p>Loading menu...</p>;
+  if (error) return <p className="text-red-600">{error}</p>
+
   return (
     <div className="bg-white rounded-xl shadow-sm overflow-hidden">
       <table className="w-full">
@@ -55,7 +63,7 @@ export default function MenuTable({ onSelectMenu }: MenuTableProps) {
           {menuItems.map((item) => (
             <tr
               key={item.menuId}
-              onClick={() => onSelectMenu(item)}
+              onClick={() => onSelectMenu({ ...item, defaultRecipe: [] })}
               className="hover:bg-gray-50 cursor-pointer"
             >
               <td className="px-6 py-4 text-sm text-gray-900">{item.menuId}</td>

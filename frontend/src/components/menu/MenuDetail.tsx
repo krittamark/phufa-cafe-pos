@@ -2,13 +2,21 @@
 
 import { useState, useEffect } from 'react';
 
-interface DefaultRecipeItem {
+interface Ingredient {
+  ingredientId: string;
+  name: string;
+}
+
+interface Category {
+  ingredientCategoryId: string;
+  name: string;
+}
+export interface RecipeItem {
+  categoryId: string;
   ingredientId: string;
   quantity: number;
-  isBaseIngredient: boolean;
-  isReplaceable: boolean;
 }
-interface MenuItem {
+export interface MenuItem {
   menuId?: string;
   menuName: string;
   menuPrice: number;
@@ -16,7 +24,7 @@ interface MenuItem {
   menuDescription: string;
   menuUrl: string;
   menuCategory: string;
-  defaultRecipe?: DefaultRecipeItem[];
+  defaultRecipe: RecipeItem[];
 }
 
 interface MenuDetailProps {
@@ -36,12 +44,22 @@ export default function MenuDetail({ menu, isCreating, onSaved }: MenuDetailProp
     defaultRecipe: []
   });
 
-   // เมื่อ menu เปลี่ยน → เซ็ตค่าเริ่มต้นให้ form (กรณีไม่ใช่เพิ่มใหม่)
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [ingredientsByCategory, setIngredientsByCategory] = useState<Record<string, Ingredient[]>>({});
+
+  // โหลดหมวดหมู่
+  useEffect(() => {
+    fetch('/api/ingredient-categories')
+      .then(res => res.json())
+      .then(data => setCategories(data))
+      .catch(err => console.error('Load categories failed:', err));
+  }, []);
+
+   //โหลดข้อมูล menu
   useEffect(() => {
     if (menu && !isCreating) {
       setForm(menu);
     } else {
-      // รีเซ็ตฟอร์มเมื่อสร้างใหม่
       setForm({
         menuName: '',
         menuPrice: 0,
@@ -54,8 +72,59 @@ export default function MenuDetail({ menu, isCreating, onSaved }: MenuDetailProp
     }
   }, [menu, isCreating]);
 
-  const handleChange = (field: keyof MenuItem, value: string | number) => {
+  // โหลดวัตถุดิบตาม category
+  const loadIngredients = async (categoryId: string) => {
+    if (ingredientsByCategory[categoryId]) return;
+    try {
+      const res = await fetch(`/api/ingredient-categories/${categoryId}/ingredients`);
+      const data = await res.json();
+      setIngredientsByCategory(prev => ({ ...prev, [categoryId]: data }));
+    } catch (err) {
+      console.error('Load ingredients failed:', err);
+    }
+  };
+
+  const handleChange = (field: keyof MenuItem, value: any) => {
     setForm({ ...form, [field]: value });
+  };
+
+   const handleRecipeChange = (
+    index: number,
+    field: keyof RecipeItem,
+    value: string | number
+  ) => {
+    const updated = [...form.defaultRecipe];
+    updated[index][field] = value as never;
+
+    if (field === 'categoryId') loadIngredients(value as string);
+    setForm({ ...form, defaultRecipe: updated });
+  };
+
+   const handleAddRecipe = () => {
+    if (categories.length === 0) {
+      alert('No Ingredient Category yet');
+      return;
+    }
+    const firstCategoryId = categories[0].ingredientCategoryId;
+    loadIngredients(firstCategoryId);
+
+    setForm({
+      ...form,
+      defaultRecipe: [
+        ...form.defaultRecipe,
+        {
+          categoryId: firstCategoryId,
+          ingredientId: '',
+          quantity: 0
+        }
+      ]
+    });
+  };
+
+   const handleRemoveRecipe = (index: number) => {
+    const updated = [...form.defaultRecipe];
+    updated.splice(index, 1);
+    setForm({ ...form, defaultRecipe: updated });
   };
 
   const handleSave = async () => {
@@ -67,7 +136,6 @@ export default function MenuDetail({ menu, isCreating, onSaved }: MenuDetailProp
       });
 
       if (!res.ok) throw new Error('Failed to save menu');
-
       alert('Menu saved successfully');
       onSaved?.(); // เรียก callback ให้ parent รีเฟรชหรือปิด form
     } catch (err: any) {
@@ -77,7 +145,7 @@ export default function MenuDetail({ menu, isCreating, onSaved }: MenuDetailProp
   
   return (
     <div className="bg-white rounded-xl shadow-sm p-6">
-
+  
       <div className="flex items-center justify-between mb-6">
         <h2 className="text-xl font-semibold mb-4">
         {isCreating ? 'Add New Menu' : form.menuId}
@@ -98,8 +166,8 @@ export default function MenuDetail({ menu, isCreating, onSaved }: MenuDetailProp
             onChange={(e) => handleChange('menuStatus', e.target.value)}
             className="w-full border rounded px-2 py-1"
           >
-            <option value="พร้อมขาย">พร้อมขาย</option>
-            <option value="ไม่พร้อมขาย">ไม่พร้อมขาย</option>
+            <option value="พร้อมขาย">Sellable</option>
+            <option value="ไม่พร้อมขาย">Not Sellable</option>
           </select>
         </div>
 
@@ -151,6 +219,72 @@ export default function MenuDetail({ menu, isCreating, onSaved }: MenuDetailProp
             className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg text-gray-900 sm:text-sm"
           />
         </div>
+
+        {/* ส่วนวัตถุดิบ */}
+          <div className="mt-6">
+          <h3 className="block text-sm font-medium text-gray-700">DefaultRecipe</h3>
+          {form.defaultRecipe.map((item, index) => {
+            const ingredients = ingredientsByCategory[item.categoryId] || [];
+            return (
+              <div key={index} className="border p-3 mb-3 rounded space-y-2">
+                <select
+                  value={item.categoryId}
+                  onChange={(e) =>
+                    handleRecipeChange(index, 'categoryId', e.target.value)
+                  }
+                  className="w-full border rounded px-2 py-1"
+                >
+                  {categories.map((cat) => (
+                    <option key={cat.ingredientCategoryId} value={cat.ingredientCategoryId}>
+                      {cat.name}
+                    </option>
+                  ))}
+                </select>
+
+                <select
+                  value={item.ingredientId}
+                  onChange={(e) =>
+                    handleRecipeChange(index, 'ingredientId', e.target.value)
+                  }
+                  className="w-full border rounded px-2 py-1"
+                >
+                  <option value="">Choose Ingredient</option>
+                  {ingredients.map((ing) => (
+                    <option key={ing.ingredientId} value={ing.ingredientId}>
+                      {ing.name}
+                    </option>
+                  ))}
+                </select>
+
+                <input
+                  type="number"
+                  //placeholder="ปริมาณ"
+                  value={item.quantity}
+                  onChange={(e) =>
+                    handleRecipeChange(index, 'quantity', Number(e.target.value))
+                  }
+                  className="w-full border rounded px-2 py-1"
+                />
+
+                <button
+                  type="button"
+                  onClick={() => handleRemoveRecipe(index)}
+                  className="text-sm text-red-600 hover:underline"
+                >
+                  Delete
+                </button>
+              </div>
+            );
+          })}
+
+          <button
+          type="button"
+          onClick={handleAddRecipe}
+          className="mt-2 px-4 py-2 bg-green-600 text-white rounded"
+        >
+          + Add Ingredient
+        </button>
+      </div>
 
         <div>
           <label className="block text-sm font-medium text-gray-700">Image</label>
