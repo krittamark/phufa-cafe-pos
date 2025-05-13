@@ -129,14 +129,22 @@ export default function MenuDetail({ menu, isCreating, onSaved }: MenuDetailProp
 
   const handleSave = async () => {
     try {
-      const res = await fetch('/api/menu', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(form)
-      });
+      const isEditing = !!form.menuId;
+      const url = isEditing
+        ? `/api/menu/${form.menuId}` // แก้ไข
+        : '/api/menu';              // สร้างใหม่
+      
+      const method = isEditing ? 'PUT' : 'POST';
 
-      if (!res.ok) throw new Error('Failed to save menu');
-      alert('Menu saved successfully');
+      const res = await fetch(url, {
+      method,
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(form)
+    });
+
+      if (!res.ok) throw new Error(isEditing ? 'Failed to edit menu' : 'Failed to Create menu');
+      const message = isEditing ? 'Update Menu Successfully' : 'Create Menu Successfully';
+      alert(message);
       onSaved?.(); // เรียก callback ให้ parent รีเฟรชหรือปิด form
     } catch (err: any) {
       alert('Error occurred: ' + err.message);
