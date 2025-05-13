@@ -1,79 +1,58 @@
-'use client';
+import { useEffect, useState } from 'react';
 
-interface Order {
+export interface OrderItem {
+  name: string;
+  quantity: number;
+  price: number;
+  ingredients: {
+    name: string;
+    amount: string;
+  }[];
+}
+
+export interface Order {
   orderId: string;
   dateTime: string;
   customer: string;
   employee: string;
   menuCount: number;
   total: number;
-  items?: {
-    name: string;
-    quantity: number;
-    price: number;
-    ingredients: {
-      name: string;
-      amount: string;
-    }[];
-  }[];
+  items?: OrderItem[];
 }
 
 interface OrderListProps {
-  onSelectOrder: (order: Order | null) => void;
+  onSelectOrder: (order: any) => void;
+  selectedDate: string;
+  orders: any[];
+  customers: any[];
+  employees: any[];
 }
 
-export default function OrderList({ onSelectOrder }: OrderListProps) {
-  const orders: Order[] = [
-    {
-      orderId: 'O265980000',
-      dateTime: '2024-03-21 00:18:00',
-      customer: 'Yodchai Manmak',
-      employee: 'Somchai Lorlao',
-      menuCount: 6,
-      total: 195.00,
-      items: [
-        {
-          name: 'Espresso',
-          quantity: 2,
-          price: 55,
-          ingredients: [
-            { name: 'กาแฟคั่ว', amount: '1 oz' },
-            { name: 'น้ำร้อน', amount: '2 oz' }
-          ]
-        },
-        {
-          name: 'Latte',
-          quantity: 1,
-          price: 85,
-          ingredients: [
-            { name: 'กาแฟ', amount: '1 oz' },
-            { name: 'นมร้อน', amount: '4 oz' },
-            { name: 'ฟองนม', amount: '1 oz' }
-          ]
-        }
-      ]
-    },
-    {
-      orderId: 'O265980001',
-      dateTime: '2024-03-21 01:00:00',
-      customer: 'Nattapong Suwan',
-      employee: 'Apichat Chansri',
-      menuCount: 4,
-      total: 120.00,
-      items: [
-        {
-          name: 'Americano',
-          quantity: 2,
-          price: 60,
-          ingredients: [
-            { name: 'กาแฟ', amount: '1 oz' },
-            { name: 'น้ำร้อน', amount: '4 oz' }
-          ]
-        }
-      ]
-    },
-    // Add more orders as needed
-  ];
+export default function OrderList({ onSelectOrder, selectedDate, orders, customers, employees }: OrderListProps) {
+  function getCustomerName(citizenId: string) {
+    const c = customers.find((c: any) => c.citizenId === citizenId);
+    return c ? `${c.firstname} ${c.lastname}` : '-';
+  }
+  function getEmployeeName(empId: string) {
+    const e = employees.find((e: any) => e.empId === empId);
+    return e ? `${e.firstname} ${e.lastname}` : '-';
+  }
+
+  function formatDateTime(dateString: string) {
+    if (!dateString) return '-';
+    const date = new Date(dateString);
+    const datePart = date.toLocaleDateString('en-GB', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+    });
+    const timePart = date.toLocaleTimeString('en-GB', {
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: false,
+    });
+    return `${datePart} ${timePart}`;
+  }
 
   return (
     <div className="bg-white rounded-xl shadow-sm overflow-hidden">
@@ -96,15 +75,19 @@ export default function OrderList({ onSelectOrder }: OrderListProps) {
               className="hover:bg-gray-50 cursor-pointer"
             >
               <td className="px-6 py-4 text-sm text-gray-900">{order.orderId}</td>
-              <td className="px-6 py-4 text-sm text-gray-900">{order.dateTime}</td>
-              <td className="px-6 py-4 text-sm text-gray-900">{order.customer}</td>
-              <td className="px-6 py-4 text-sm text-gray-900">{order.employee}</td>
-              <td className="px-6 py-4 text-sm text-gray-900">{order.menuCount}</td>
-              <td className="px-6 py-4 text-sm text-gray-900">{order.total.toFixed(2)}</td>
+              <td className="px-6 py-4 text-sm text-gray-900">{formatDateTime(order.orderDateTime)}</td>
+              <td className="px-6 py-4 text-sm text-gray-900">{getCustomerName(order.orderByCitizenId)}</td>
+              <td className="px-6 py-4 text-sm text-gray-900">{getEmployeeName(order.orderMakerEmpId)}</td>
+              <td className="px-6 py-4 text-sm text-gray-900">-</td>
+              <td className="px-6 py-4 text-sm text-gray-900">{
+                order.orderPrice !== undefined && order.orderPrice !== null && !isNaN(Number(order.orderPrice))
+                  ? Number(order.orderPrice).toFixed(2)
+                  : '-'
+              }</td>
             </tr>
           ))}
         </tbody>
       </table>
     </div>
   );
-} 
+}

@@ -4,11 +4,12 @@ import { useEffect, useState } from "react";
 import Header from "@/components/layout/Header";
 import CategoryGrid from "@/components/CategoryGrid";
 import ProductGrid from "@/components/ProductGrid";
-import OrderDetail from "@/components/order/OrderDetail";
+import OrderDetail from "@/components/OrderDetailPOS";
 import axios from "axios";
+
 import { Category } from "@/components/CategoryGrid";
 import { Product } from "@/components/ProductGrid";
-import { Order } from "@/components/order/OrderDetail";
+import { Order } from "@/components/OrderDetailPOS";
 
 export default function POS() {
   const [selectedCategory, setSelectedCategory] = useState("");

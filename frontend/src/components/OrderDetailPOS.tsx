@@ -1,7 +1,7 @@
 "use client";
 
 import axios from "axios";
-import { Ingredients } from "../ProductGrid";
+import { Ingredients } from "./ProductGrid";
 import { useEffect, useState } from "react";
 
 interface OrderItem {
@@ -48,6 +48,7 @@ export default function OrderDetail({
   updateQuantity,
   removeItem,
 }: OrderDetailProps) {
+
   const items = order?.items || [];
   const total = order?.total || 0;
   const orderId = order?.orderId || "";
@@ -119,6 +120,7 @@ export default function OrderDetail({
             </select>
           }
         </div>
+
       </div>
 
       <div className="space-y-6">
