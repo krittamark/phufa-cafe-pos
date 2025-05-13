@@ -4,7 +4,7 @@ import { useState } from 'react';
 import Header from '@/components/layout/Header';
 import CategoryGrid from '@/components/CategoryGrid';
 import ProductGrid from '@/components/ProductGrid';
-import OrderDetail from '@/components/order/OrderDetail';
+import OrderDetailPOS from '@/components/OrderDetailPOS';
 
 export default function POS() {
   const [selectedCategory, setSelectedCategory] = useState('Coffee');
@@ -65,7 +65,7 @@ export default function POS() {
             />
           </div>
           <div className="w-[400px]">
-            <OrderDetail order={currentOrder} />
+            <OrderDetailPOS order={currentOrder} />
           </div>
         </div>
       </main>

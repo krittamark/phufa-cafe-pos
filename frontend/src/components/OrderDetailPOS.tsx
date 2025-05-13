@@ -20,7 +20,7 @@ interface OrderDetailProps {
   order: Order;
 }
 
-export default function OrderDetail({ order }: OrderDetailProps) {
+export default function OrderDetailPOS({ order }: OrderDetailProps) {
   // Ensure items array exists with a default empty array
   const items = order?.items || [];
   const total = order?.total || 0;
@@ -31,6 +31,7 @@ export default function OrderDetail({ order }: OrderDetailProps) {
       <div className="flex items-center justify-between mb-6">
         <h2 className="text-lg font-medium">Order Detail</h2>
         <div className="text-sm text-gray-500">#{orderId}</div>
+        <button className="text-gray-500 hover:text-gray-700" onClick={() => window.close()}>✕</button>
       </div>
 
       <div className="space-y-6">
