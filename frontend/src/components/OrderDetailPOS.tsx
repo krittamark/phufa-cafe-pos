@@ -13,6 +13,7 @@ interface OrderItem {
 }
 
 export interface Order {
+
   orderId: string;
   items: OrderItem[];
   total: number;
@@ -99,10 +100,12 @@ export default function OrderDetail({
     }
   }
 
+
   return (
     <div className="bg-white rounded-xl shadow-sm p-6">
       <div className="flex items-center justify-between mb-6">
         <h2 className="text-lg font-medium">Order Detail</h2>
+
         <div className="text-sm text-gray-500">
           {
             <select
@@ -128,6 +131,7 @@ export default function OrderDetail({
         {items.map((item, index) => (
           <div key={index} className="border-b border-gray-200 pb-4">
             <div className="flex items-start justify-between mb-2">
+
               <div className="flex items-start gap-2">
                 <div className="flex flex-col justify-between h-full">
                   <div className="bg-red-100 text-red-800 px-2 py-1 rounded text-sm">
@@ -139,11 +143,13 @@ export default function OrderDetail({
                   >
                     ลบ
                   </button>
+
                 </div>
                 <div>
                   <div className="font-medium">{item.name}</div>
                   <div className="text-sm text-gray-500">
                     {item.ingredients.map((ing) => (
+
                       <div
                         key={ing.default.name}
                         className="flex my-1.5 justify-between"
@@ -182,11 +188,13 @@ export default function OrderDetail({
                         )}
 
                         <span className="ml-10">{ing.default.amount}</span>
+
                       </div>
                     ))}
                   </div>
                 </div>
               </div>
+
               <div className="font-medium grid grid-cols-5">
                 <div className="col-span-5 justify-end flex pl-6">
                   {item.price.toFixed(2)}
@@ -204,6 +212,7 @@ export default function OrderDetail({
                   -
                 </button>
               </div>
+
             </div>
           </div>
         ))}
@@ -220,6 +229,7 @@ export default function OrderDetail({
           className="w-full py-3 bg-primary text-white rounded-lg hover:bg-primary-dark transition-colors"
           onClick={placeOrder}
         >
+
           Place Order
         </button>
       </div>

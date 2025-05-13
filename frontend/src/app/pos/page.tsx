@@ -161,6 +161,7 @@ export default function POS() {
               updateQuantity={handleQuantityChange}
               removeItem={handleRemoveItem}
             />
+
           </div>
         </div>
       </main>
