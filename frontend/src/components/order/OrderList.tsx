@@ -65,6 +65,7 @@ export default function OrderList({ onSelectOrder, selectedDate, orders, custome
             <th className="px-6 py-4 text-left text-sm font-medium text-gray-500">Employee</th>
             <th className="px-6 py-4 text-left text-sm font-medium text-gray-500">Menu#</th>
             <th className="px-6 py-4 text-left text-sm font-medium text-gray-500">Total</th>
+            <th className="px-6 py-4 text-left text-sm font-medium text-gray-500">Status</th>
           </tr>
         </thead>
         <tbody className="divide-y divide-gray-200">
@@ -84,6 +85,13 @@ export default function OrderList({ onSelectOrder, selectedDate, orders, custome
                   ? Number(order.orderPrice).toFixed(2)
                   : '-'
               }</td>
+              <td className="px-6 py-4 text-sm text-gray-900">
+                <span
+                  className={`px-2 py-1 rounded text-white text-sm ${order.orderStatus ? 'bg-green-500' : 'bg-red-500'}`}
+                >
+                  {order.orderStatus ? 'Paid' : 'In-Progress'}
+                </span>
+              </td>
             </tr>
           ))}
         </tbody>
