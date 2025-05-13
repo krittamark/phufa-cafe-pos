@@ -1,33 +1,42 @@
 'use client';
 
-interface MenuItem {
+export interface MenuItem {
   menuId: string;
-  status: string;
-  name: string;
-  description: string;
-  price: number;
-  category: string;
-  image: string;
+  menuName: string;
+  menuDescription: string;
+  menuPrice: number;
+  menuStatus: string;
+  menuCategory: string;
+  menuUrl: string;
 }
 
 interface MenuTableProps {
   onSelectMenu: (menu: MenuItem | null) => void;
 }
 
-export default function MenuTable({ onSelectMenu }: MenuTableProps) {
-  const menuItems: MenuItem[] = [
-    {
-      menuId: 'M213560000',
-      status: 'พร้อมขาย',
-      name: 'Espresso',
-      description: 'A bold espresso shot with rich crema, offering...',
-      price: 20,
-      category: 'Coffee',
-      image: 'X'
-    },
-    // Add more menu items as needed
-  ];
+const menuItems: MenuItem[] = [
+  {
+    menuId: 'M000000001',
+    menuName: 'อเมริกาโน่Test',
+    menuDescription:'GoodCoffee',
+    menuPrice: 45,
+    menuStatus: 'พร้อมขาย',
+    menuCategory: 'กาแฟ',
+    menuUrl: 'picture'
+  },
+  {
+    menuId: 'M000000002',
+    menuName: 'ชาไทยTest',
+    menuDescription: 'ILoveIt',
+    menuPrice: 40,
+    menuStatus: 'พร้อมขาย',
+    menuCategory: 'ชา',
+    menuUrl: 'picture'
+  }
+];
 
+export default function MenuTable({ onSelectMenu }: MenuTableProps) {
+  
   return (
     <div className="bg-white rounded-xl shadow-sm overflow-hidden">
       <table className="w-full">
@@ -50,12 +59,12 @@ export default function MenuTable({ onSelectMenu }: MenuTableProps) {
               className="hover:bg-gray-50 cursor-pointer"
             >
               <td className="px-6 py-4 text-sm text-gray-900">{item.menuId}</td>
-              <td className="px-6 py-4 text-sm text-gray-900">{item.status}</td>
-              <td className="px-6 py-4 text-sm text-gray-900">{item.name}</td>
-              <td className="px-6 py-4 text-sm text-gray-900">{item.description}</td>
-              <td className="px-6 py-4 text-sm text-gray-900">{item.price}</td>
-              <td className="px-6 py-4 text-sm text-gray-900">{item.category}</td>
-              <td className="px-6 py-4 text-sm text-gray-900">{item.image}</td>
+              <td className="px-6 py-4 text-sm text-gray-900">{item.menuStatus}</td>
+              <td className="px-6 py-4 text-sm text-gray-900">{item.menuName}</td>
+              <td className="px-6 py-4 text-sm text-gray-900">{item.menuDescription}</td>
+              <td className="px-6 py-4 text-sm text-gray-900">{item.menuPrice}</td>
+              <td className="px-6 py-4 text-sm text-gray-900">{item.menuCategory}</td>
+              <td className="px-6 py-4 text-sm text-gray-900">{item.menuUrl}</td>
             </tr>
           ))}
         </tbody>
