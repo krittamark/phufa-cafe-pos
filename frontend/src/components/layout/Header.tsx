@@ -1,32 +1,32 @@
-'use client';
+"use client";
 
-import Image from 'next/image';
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import Image from "next/image";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 export default function Header() {
   const pathname = usePathname();
 
-  const EmployeeName = localStorage.getItem('employeeName');
-  const EmployeeRole = localStorage.getItem('employeeRole');
-  const EmployeeId = localStorage.getItem('employeeId');
-  const token = localStorage.getItem('token');
-  console.log('EmployeeId:', EmployeeId);
-  console.log('EmployeeName:', EmployeeName);
-  console.log('EmployeeRole:', EmployeeRole);
+  const EmployeeName = localStorage.getItem("employeeName");
+  const EmployeeRole = localStorage.getItem("employeeRole");
+  const EmployeeId = localStorage.getItem("employeeId");
+  const token = localStorage.getItem("token");
+  console.log("EmployeeId:", EmployeeId);
+  console.log("EmployeeName:", EmployeeName);
+  console.log("EmployeeRole:", EmployeeRole);
 
   const logout = () => {
-    localStorage.removeItem('employeeId');
-    localStorage.removeItem('employeeName');
-    localStorage.removeItem('employeeRole');
-    localStorage.removeItem('token');
-    window.location.href = '/';
+    localStorage.removeItem("employeeId");
+    localStorage.removeItem("employeeName");
+    localStorage.removeItem("employeeRole");
+    localStorage.removeItem("token");
+    window.location.href = "/";
   };
 
   const navigation = [
-    { name: 'POS', href: '/pos' },
-    { name: 'Menu', href: '/dashboard' },
-    { name: 'Orders', href: '/orders' },
+    { name: "POS", href: "/pos" },
+    { name: "Menu", href: "/dashboard" },
+    { name: "Orders", href: "/orders" },
   ];
 
   return (
@@ -40,8 +40,8 @@ export default function Header() {
                 href={item.href}
                 className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
                   pathname === item.href
-                    ? 'bg-primary text-white'
-                    : 'text-gray-600 hover:text-gray-900'
+                    ? "bg-primary text-white"
+                    : "text-gray-600 hover:text-gray-900"
                 }`}
               >
                 {item.name}
@@ -54,8 +54,18 @@ export default function Header() {
           <span className="text-sm font-medium">{EmployeeName}</span>
           <span className="text-xs text-gray-500">Cashier</span>
           <div className="w-8 h-8 bg-gray-200 rounded-full"></div>
+          <button onClick={logout} className="ml-10">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 576 512"
+              fill="currentColor"
+              className="w-5 h-5"
+            >
+              <path d="M320 32c0-9.9-4.5-19.2-12.3-25.2S289.8-1.4 280.2 1l-179.9 45C79 51.3 64 70.5 64 92.5L64 448l-32 0c-17.7 0-32 14.3-32 32s14.3 32 32 32l64 0 192 0 32 0 0-32 0-448zM256 256c0 17.7-10.7 32-24 32s-24-14.3-24-32s10.7-32 24-32s24 14.3 24 32zm96-128l96 0 0 352c0 17.7 14.3 32 32 32l64 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-32 0 0-320c0-35.3-28.7-64-64-64l-96 0 0 64z" />
+            </svg>
+          </button>
         </div>
       </div>
     </header>
   );
-} 
+}
