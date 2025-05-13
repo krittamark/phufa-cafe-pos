@@ -51,8 +51,10 @@ export default function Header() {
           <div className="h-6 w-px bg-gray-200" />
         </div>
         <div className="flex items-center gap-2">
-          <span className="text-sm font-medium">{EmployeeName}</span>
-          <span className="text-xs text-gray-500">Cashier</span>
+          <div className="flex flex-col">
+            <span className="text-xs text-gray-500 self-end">Cashier</span>
+            <span className="text-sm font-medium">{EmployeeName}</span>
+          </div>
           <div className="w-8 h-8 bg-gray-200 rounded-full"></div>
           <button onClick={logout} className="ml-10">
             <svg
