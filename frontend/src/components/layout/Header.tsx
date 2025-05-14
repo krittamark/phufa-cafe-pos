@@ -11,9 +11,6 @@ export default function Header() {
   const EmployeeRole = localStorage.getItem("employeeRole");
   const EmployeeId = localStorage.getItem("employeeId");
   const token = localStorage.getItem("token");
-  console.log("EmployeeId:", EmployeeId);
-  console.log("EmployeeName:", EmployeeName);
-  console.log("EmployeeRole:", EmployeeRole);
 
   const logout = () => {
     localStorage.removeItem("employeeId");
@@ -26,6 +23,7 @@ export default function Header() {
   const navigation = [
     { name: "POS", href: "/pos" },
     { name: "Menu", href: "/dashboard" },
+    { name: "Customer", href: "/customer" },
     { name: "Orders", href: "/orders" },
   ];
 
