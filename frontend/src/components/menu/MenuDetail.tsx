@@ -151,6 +151,31 @@ export default function MenuDetail({ menu, isCreating, onSaved }: MenuDetailProp
     }
   };
   
+  const handleDelete = async () => {
+  if (!form.menuId) return;
+
+  const confirmDelete = confirm('Are you sure you want to delete this Menu?');
+  if (!confirmDelete) return;
+
+  try {
+    const res = await fetch(`/api/menu/${form.menuId}`, {
+      method: 'DELETE',
+    });
+
+    if (res.status === 204) {
+      alert('Delete Menu Successfully');
+      onSaved?.();
+    } else if (res.status === 404) {
+      alert('Menu Not Found!');
+    } else {
+      const data = await res.json();
+      alert(`Error occurred: ${data.message || 'Cannot Delete Menu'}`);
+    }
+  } catch (error: any) {
+    alert('Error occurred: ' + error.message);
+  }
+  };
+
   return (
     <div className="bg-white rounded-xl shadow-sm p-6">
   
@@ -159,11 +184,14 @@ export default function MenuDetail({ menu, isCreating, onSaved }: MenuDetailProp
         {isCreating ? 'Add New Menu' : form.menuId}
         </h2>
         
-        <button className="p-2 hover:bg-gray-100 rounded-lg">
-          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z" />
-          </svg>
-        </button>
+        {!isCreating && form.menuId && (
+          <button
+            className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded mb-4"
+            onClick={handleDelete}
+          >
+            Delete Menu
+          </button>
+          )}
       </div>
 
       <div className="space-y-3">
