@@ -3,8 +3,6 @@
 import { useState, useEffect } from 'react';
 import { useToast } from '@/contexts/ToastContext';
 
-const { addToast } = useToast();
-
 interface Ingredient {
   ingredientId: string;
   name: string;
@@ -36,9 +34,13 @@ interface MenuDetailProps {
   menu: MenuItem | null;
   isCreating?: boolean;
   onSaved?: () => void;
+  onCancel?: () => void;
 }
 
-export default function MenuDetail({ menu, isCreating, onSaved }: MenuDetailProps) {
+export default function MenuDetail({ menu, isCreating, onSaved, onCancel }: MenuDetailProps) {
+
+  const { addToast } = useToast();
+
   const [form, setForm] = useState<MenuItem>({
     menuName: '',
     menuPrice: 0,
@@ -154,7 +156,7 @@ export default function MenuDetail({ menu, isCreating, onSaved }: MenuDetailProp
       addToast(message,'success');
       onSaved?.(); // เรียก callback ให้ parent รีเฟรชหรือปิด form
     } catch (err: any) {
-      addToast('Error occurred: ' + err.message,'error');
+      addToast('Error occurred:  ${err.message}','error');
     }
   };
   
@@ -179,7 +181,7 @@ export default function MenuDetail({ menu, isCreating, onSaved }: MenuDetailProp
       addToast(`Error occurred: ${data.message || 'Cannot Delete Menu'}`,'error');
     }
   } catch (error: any) {
-    addToast('Error occurred: ' + error.message,'error');
+    addToast('Error occurred:  + ${err.message}','error');
   }
   };
 
@@ -187,8 +189,16 @@ export default function MenuDetail({ menu, isCreating, onSaved }: MenuDetailProp
     <div className="bg-white rounded-xl shadow-sm p-6">
   
       <div className="flex items-center justify-between mb-6">
+        <button
+          onClick={onCancel}
+          className="text-2xl text-gray-700 hover:text-black font-bold mb-2"
+          title="Cancel"
+        >
+          &lt;
+        </button>
+
         <h2 className="text-xl font-semibold mb-4">
-        {isCreating ? 'Add New Menu' : form.menuId}
+        {isCreating ? 'Add New Menu' : form.menuName}
         </h2>
         
         {!isCreating && form.menuId && (
@@ -218,6 +228,8 @@ export default function MenuDetail({ menu, isCreating, onSaved }: MenuDetailProp
           <label className="block text-sm font-medium">Menu ID</label>
           <input
             type="text"
+            placeholder='AutoGenerate'
+            readOnly
             value={form.menuId}
             onChange={(e) => handleChange('menuId', e.target.value)}
             className="w-full border rounded px-2 py-1"
